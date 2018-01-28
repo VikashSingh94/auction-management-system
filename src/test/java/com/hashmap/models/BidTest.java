@@ -11,9 +11,8 @@ public class BidTest {
     @Test
     public void testCreateBid() {
 
-        Bid bid = new Bid(UUID.randomUUID(),UUID.randomUUID(),new BigDecimal(100));
+        Bid bid = new Bid(UUID.randomUUID(),new BigDecimal(100));
 
-        Assert.assertNotNull(bid.getAuctionId());
         Assert.assertNotNull(bid.getUserId());
         Assert.assertNotNull(bid.getBidPrice());
 
