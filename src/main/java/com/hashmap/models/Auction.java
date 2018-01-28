@@ -5,19 +5,26 @@ import java.util.UUID;
 
 public class Auction {
 
-    private UUID id;
+    private UUID auctionid;
     private Item item;
     private BigDecimal startingAuctionPrice;
+    private int endTimeInSecond;
+    private boolean isAuctionOpen;
+    private CountDownTimer countDownTimer;
 
-    public Auction(Item item, BigDecimal startingAuctionPrice) {
-        this.id = UUID.randomUUID();
+
+    public Auction(Item item, final BigDecimal startingAuctionPrice, int endTimeInSecond) {
+        this.auctionid = UUID.randomUUID();
         this.item = item;
         this.startingAuctionPrice = startingAuctionPrice;
+        this.endTimeInSecond = endTimeInSecond;
+        isAuctionOpen = true;
+        countDownTimer = new CountDownTimer(endTimeInSecond, this.auctionid);
     }
 
 
-    public UUID getId() {
-        return id;
+    public UUID getAuctionid() {
+        return auctionid;
     }
 
 
@@ -27,5 +34,17 @@ public class Auction {
 
     public BigDecimal getStartingAuctionPrice() {
         return startingAuctionPrice;
+    }
+
+    public int getEndTimeInSecond() {
+        return endTimeInSecond;
+    }
+
+    public boolean getIsAuctionOpen() {
+        return isAuctionOpen;
+    }
+
+    public void setAuctionOpen(boolean isAuctionOpen) {
+        this.isAuctionOpen = isAuctionOpen;
     }
 }
