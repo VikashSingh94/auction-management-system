@@ -1,39 +1,42 @@
 package com.hashmap.models;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Auction {
 
-    private UUID auctionid;
+    private UUID auctionId;
     private Item item;
-    private BigDecimal startingAuctionPrice;
     private int endTimeInSecond;
     private boolean isAuctionOpen;
+    private Bid currentBid;
+    final private Bid openingBid;
     private CountDownTimer countDownTimer;
 
 
-    public Auction(Item item, final BigDecimal startingAuctionPrice, int endTimeInSecond) {
-        this.auctionid = UUID.randomUUID();
+    public Auction(Item item, Bid openingBid, int endTimeInSecond) {
+        this.auctionId = UUID.randomUUID();
         this.item = item;
-        this.startingAuctionPrice = startingAuctionPrice;
+        this.openingBid = openingBid;
         this.endTimeInSecond = endTimeInSecond;
         isAuctionOpen = true;
-        countDownTimer = new CountDownTimer(endTimeInSecond, this.auctionid);
+        currentBid = null;
+        countDownTimer = new CountDownTimer(endTimeInSecond, this.auctionId);
     }
 
-
-    public UUID getAuctionid() {
-        return auctionid;
+    public void setCurrentBid(Bid currentBid) {
+        this.currentBid = currentBid;
     }
 
+    public UUID getAuctionId() {
+        return auctionId;
+    }
 
     public Item getItem() {
         return item;
     }
 
-    public BigDecimal getStartingAuctionPrice() {
-        return startingAuctionPrice;
+    public Bid getOpeningBid() {
+        return openingBid;
     }
 
     public int getEndTimeInSecond() {
@@ -46,5 +49,9 @@ public class Auction {
 
     public void setAuctionOpen(boolean isAuctionOpen) {
         this.isAuctionOpen = isAuctionOpen;
+    }
+
+    public Bid getCurrentBid() {
+        return currentBid;
     }
 }

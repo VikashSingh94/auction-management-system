@@ -4,25 +4,21 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Bid {
-    private UUID auctionId;
     private UUID userId;
     private BigDecimal bidPrice;
 
-    public Bid(UUID auctionId, UUID userId, BigDecimal bidPrice) {
-        this.auctionId = auctionId;
+    public Bid( UUID userId, BigDecimal bidPrice) {
         this.userId = userId;
         this.bidPrice = bidPrice;
     }
 
-    public UUID getAuctionId() {
-        return auctionId;
-    }
-
     public UUID getUserId() {
+
         return userId;
     }
 
     public BigDecimal getBidPrice() {
+
         return bidPrice;
     }
 }
