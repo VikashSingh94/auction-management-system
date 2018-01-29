@@ -8,16 +8,6 @@ import java.util.UUID;
 
 public class UserManagementTest {
 
-
-/*
-    @BeforeClass
-    public static void UserManager()
-    {
-        UserManagement userManagement;
-        userManagement = new UserManagement();
-    }
-    */
-
     @Test
     public void testcreateUser()
     {
@@ -27,7 +17,6 @@ public class UserManagementTest {
         User user = new User("abc","abc@gmail.com");
         userManagement.createUser(user);
 
-        UUID userId = UUID.randomUUID();
-        userManagement.readUser(userId);
+        Assert.assertNotNull(userManagement.readUser(user.getUserId()));
     }
 }

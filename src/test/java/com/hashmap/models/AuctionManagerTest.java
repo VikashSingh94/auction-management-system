@@ -12,12 +12,8 @@ import static java.lang.Thread.sleep;
 public class AuctionManagerTest {
 
     @Test
-    public void testCreateAuctionManager()throws Exception
+    public void createAuction_IsOpen_TillEndTime()throws Exception
     {
-        //TODO: Refactor the test into three different test cases
-        //Creation of auction
-        //Auction is open before the ending time
-        //Auction is closed after ending time
         AuctionManager auctionManager = new AuctionManager();
 
         Auction auction;
@@ -25,17 +21,29 @@ public class AuctionManagerTest {
 
         auctionManager.createAuction(auction);
 
-        List<Auction> list;
-        list = DataBase.getListOfAuction();
+        List<Auction> auctions;
+        auctions = DataBase.getListOfAuction();
 
-        Assert.assertEquals(list.get(0).getIsAuctionOpen(),true);
+        Assert.assertEquals(auctions.get(0).getIsAuctionOpen(),true);
+
+    }
+
+    @Test
+    public  void createAuction_IsClosed_AfterTimeEnd()throws Exception
+    {
+        AuctionManager auctionManager = new AuctionManager();
+
+        Auction auction;
+        auction = new Auction(new Item("jet engines", "mach 3 "), new Bid(UUID.randomUUID(),new BigDecimal(1000)), 5);
+
+        auctionManager.createAuction(auction);
 
         sleep(6000);
 
-        list = DataBase.getListOfAuction();
+        List<Auction> auctions;
+        auctions = DataBase.getListOfAuction();
 
-        Assert.assertEquals(list.get(0).getIsAuctionOpen(),false);
-
+        Assert.assertEquals(auctions.get(0).getIsAuctionOpen(),false);
     }
 }
 

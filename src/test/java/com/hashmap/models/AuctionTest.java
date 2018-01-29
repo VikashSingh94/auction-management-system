@@ -9,17 +9,17 @@ import java.util.UUID;
 public class AuctionTest {
 
     @Test
-    public void testCreateAuction() {
+    public void Auction_fields_ShouldNotNull() {
         Auction auction;
-        auction = new Auction(new Item("jet engines","mach 3 speed"),
-                    new Bid(UUID.randomUUID(),new BigDecimal(300)),1);
+        auction = new Auction(new Item("jet engines", "mach 3 speed"),
+                new Bid(UUID.randomUUID(), new BigDecimal(300)), 3);
 
         Assert.assertNotNull(auction.getAuctionId());
         Assert.assertNotNull(auction.getOpeningBid());
-        Assert.assertNotNull(auction.getIsAuctionOpen());
-        Assert.assertNotNull(auction.getEndTimeInSecond());
+
         Assert.assertNotNull(auction.getItem().getName());
         Assert.assertNotNull(auction.getItem().getDescription());
-    }
 
+        //Assert.assertEquals(auction.getCurrentBid(),null);
+    }
 }

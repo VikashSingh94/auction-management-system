@@ -5,14 +5,13 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 import static java.lang.Thread.sleep;
 
 public class AuctionSystemTest {
 
     @Test
-    public  void testAuctionBeforeClosing()throws Exception
+    public  void PlaceBid_OnAuctionIsOpen()throws Exception
     {
         User seller = new User("abc","abc@gmail.com");
         User buyer  = new User("xyz","xyz@gmail.com");
@@ -36,12 +35,12 @@ public class AuctionSystemTest {
         auctionManager.placeBid(auction.getAuctionId(),new Bid(seller.getUserId(),new BigDecimal(600)));
 
 
-        Assert.assertEquals(DataBase.getAuction(auction.getAuctionId()).getCurrentBid().getBidPrice(),new BigDecimal(600));
+        Assert.assertNotNull(DataBase.getAuction(auction.getAuctionId()).getCurrentBid());
 
     }
 
     @Test
-    public  void testAuctionAfterClosing()throws Exception
+    public  void BidIsNotPlaced_AfterClosing()throws Exception
     {
         User seller = new User("abc","abc@gmail.com");
         User buyer  = new User("xyz","xyz@gmail.com");
@@ -57,22 +56,13 @@ public class AuctionSystemTest {
         List<Auction> auctions = DataBase.getListOfAuction();
 
         auction = auctions.get(0);
-
-        //check auction is open
-        Assert.assertEquals(auction.getIsAuctionOpen(),true);
-
-        //place bid
-        auctionManager.placeBid(auction.getAuctionId(),new Bid(seller.getUserId(),new BigDecimal(600)));
-
-
-        Assert.assertEquals(DataBase.getAuction(auction.getAuctionId()).getCurrentBid().getBidPrice(),new BigDecimal(600));
 
         sleep(6000);
 
         //place bid after auction get closed
         auctionManager.placeBid(auction.getAuctionId(),new Bid(seller.getUserId(),new BigDecimal(800)));
 
-        Assert.assertEquals(DataBase.getAuction(auction.getAuctionId()).getCurrentBid().getBidPrice(),new BigDecimal(600));
+        Assert.assertEquals(DataBase.getAuction(auction.getAuctionId()).getCurrentBid(),null);
 
 
     }
