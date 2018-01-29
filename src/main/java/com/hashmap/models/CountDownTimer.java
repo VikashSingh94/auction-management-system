@@ -20,7 +20,6 @@ public class CountDownTimer{
                 if (secondsLeft == 0) {
                     timer.cancel();
                     DataBase.updateIsAuctionOpen(auctionID,false);
-
                 }
             }
         }, 0, 1000);

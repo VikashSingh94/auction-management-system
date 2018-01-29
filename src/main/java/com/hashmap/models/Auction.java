@@ -6,21 +6,21 @@ public class Auction {
 
     private UUID auctionId;
     private Item item;
-    private int endTimeInSecond;
+    private int endTimeInSeconds;
     private boolean isAuctionOpen;
     private Bid currentBid;
     final private Bid openingBid;
-    private CountDownTimer countDownTimer;
+   // private CountDownTimer countDownTimer;
 
 
     public Auction(Item item, Bid openingBid, int endTimeInSecond) {
         this.auctionId = UUID.randomUUID();
         this.item = item;
         this.openingBid = openingBid;
-        this.endTimeInSecond = endTimeInSecond;
+        this.endTimeInSeconds = endTimeInSecond;
         isAuctionOpen = true;
         currentBid = null;
-        countDownTimer = new CountDownTimer(endTimeInSecond, this.auctionId);
+      //  countDownTimer = new CountDownTimer(endTimeInSeconds, this.auctionId);
     }
 
     public void setCurrentBid(Bid currentBid) {
@@ -39,8 +39,8 @@ public class Auction {
         return openingBid;
     }
 
-    public int getEndTimeInSecond() {
-        return endTimeInSecond;
+    public int getEndTimeInSeconds() {
+        return endTimeInSeconds;
     }
 
     public boolean getIsAuctionOpen() {

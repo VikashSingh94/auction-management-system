@@ -2,12 +2,17 @@ package com.hashmap.models;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public class AuctionManager {
 
+    Map<UUID,CountDownTimer> timers = new TreeMap<UUID, CountDownTimer>();
+
     public void createAuction(Auction auction) {
         DataBase.addAuctionInList(auction);
+        timers.put(auction.getAuctionId(),new CountDownTimer(auction.getEndTimeInSeconds(),auction.getAuctionId()));
     }
 
     public List<Auction> listOfOpenAuction() {
