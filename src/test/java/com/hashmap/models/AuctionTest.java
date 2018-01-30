@@ -1,5 +1,8 @@
 package com.hashmap.models;
 
+import com.hashmap.models.auction.Auction;
+import com.hashmap.models.auction.Bid;
+import com.hashmap.models.auction.Item;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,14 +15,12 @@ public class AuctionTest {
     public void Auction_fields_ShouldNotNull() {
         Auction auction;
         auction = new Auction(new Item("jet engines", "mach 3 speed"),
-                new Bid(UUID.randomUUID(), new BigDecimal(300)), 3);
+                              new Bid(UUID.randomUUID(), new BigDecimal(300)), 3);
 
         Assert.assertNotNull(auction.getAuctionId());
         Assert.assertNotNull(auction.getOpeningBid());
 
         Assert.assertNotNull(auction.getItem().getName());
         Assert.assertNotNull(auction.getItem().getDescription());
-
-        //Assert.assertEquals(auction.getCurrentBid(),null);
-    }
+        }
 }
