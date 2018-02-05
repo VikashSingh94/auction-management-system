@@ -6,29 +6,66 @@ import com.hashmap.models.auction.Item;
 import com.hashmap.models.serviceLayer.AuctionService;
 import com.hashmap.models.user.User;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+
 
 import static java.lang.Thread.sleep;
 
 public class AuctionServiceTest {
 
-    @Test
 
-    public  void PlaceBid_OnAuctionIsOpen()throws Exception
+    User seller;
+    User buyer;
+
+    AuctionService auctionService;
+    Auction auction;
+
+    @Before
+    public void beforeEachTestCase()
     {
-        User seller = new User("abc", "abc@gmail.com");
-        User buyer  = new User("xyz","xyz@gmail.com");
+        seller = new User("abc", "abc@gmail.com");
+        buyer  = new User("xyz","xyz@gmail.com");
 
+        auctionService = new AuctionService();
 
-        Auction auction;
         auction = new Auction(new Item("jet engines", "mach 3 "), new Bid(seller.getUserId(), new BigDecimal(100)), 5);
 
-        AuctionService auctionService = new AuctionService();
-        auctionService.createAuction(auction);
+    }
+
+    @Test
+    public void addAuctionSuccess()
+    {
+        Assert.assertEquals(auctionService.addAuction(auction),"Auction is added");
+    }
+
+
+    @Test
+    public void getAuctionSuccess()
+    {
+        auctionService.addAuction(auction);
+        Assert.assertEquals(auctionService.getAuction(auction.getAuctionId()),auction);
+    }
+
+
+    @Test
+    public void getAuctionFailure()
+    {
+        Assert.assertNull(auctionService.getAuction(UUID.randomUUID()));
+    }
+
+
+
+    @Test
+    public  void placeBidAuctionIsOpen()
+    {
+
+        auctionService.addAuction(auction);
 
 
         List<Auction> auctions = auctionService.runningAuctions();
@@ -39,10 +76,10 @@ public class AuctionServiceTest {
         Assert.assertEquals(auction.getIsAuctionOpen(),true);
 
         //place bid
-        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
 
 
-        Assert.assertNotNull(auctionService.getAuction(auction.getAuctionId()).getCurrentBid());
+        Assert.assertEquals(message,"Bid placed");
 
     }
 
@@ -50,17 +87,8 @@ public class AuctionServiceTest {
     @Test
     public  void BidIsNotPlaced_AfterClosing()throws Exception
     {
-        User seller = new User("abc","abc@gmail.com");
-        User buyer  = new User("xyz","xyz@gmail.com");
 
-
-        Auction auction;
-        auction = new Auction(new Item("jet engines", "mach 3 "),
-                              new Bid(seller.getUserId(),new BigDecimal(100)), 5);
-
-        AuctionService auctionService = new AuctionService();
-        auctionService.createAuction(auction);
-
+        auctionService.addAuction(auction);
 
         List<Auction> openAuctions = auctionService.runningAuctions();
 
@@ -81,4 +109,68 @@ public class AuctionServiceTest {
         Assert.assertEquals(auctionService.getAuction(randomRunningAuction.getAuctionId()).getCurrentBid(), null);
     }
 
+
+
+    @Test
+    public  void placeBidCurrentBidIsLower()
+    {
+
+        auctionService.addAuction(auction);
+
+
+        List<Auction> auctions = auctionService.runningAuctions();
+
+        auction = auctions.get(0);
+
+        //check auction is open
+        Assert.assertEquals(auction.getIsAuctionOpen(),true);
+
+        //place 1st bid
+        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        //place 2nd  bid lower
+        String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(300)));
+
+
+        Assert.assertEquals(message,"Bid price is lower than the current bid");
+
+    }
+
+
+
+    @Test
+    public  void placeBidAuctionNotPresent()
+    {
+
+       // auctionService.addAuction(auction);
+        String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        Assert.assertEquals(message,"Trying to Bid on the Auction which is not present");
+
+    }
+
+
+
+
 }
+
+
+//@Test
+//    public  void testPlaceBidWhenAuctionIsOpenIsAddedInDBMS()
+//    {
+//
+//        auctionService.addAuction(auction);
+//
+//
+//        List<Auction> auctions = auctionService.runningAuctions();
+//
+//        auction = auctions.get(0);
+//
+//        //check auction is open
+//        Assert.assertEquals(auction.getIsAuctionOpen(),true);
+//
+//        //place bid
+//        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+//
+//
+//        Assert.assertNotNull(auctionService.getAuction(auction.getAuctionId()).getCurrentBid());
+//
+//    }
