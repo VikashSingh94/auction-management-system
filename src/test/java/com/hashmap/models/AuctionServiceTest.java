@@ -42,20 +42,20 @@ public class AuctionServiceTest {
     }
 
     @Test
-    public void addAuctionSuccess()
+    public void testAddAuctionSuccess()
     {
         Assert.assertEquals(auctionService.addAuction(auction),"Auction is added");
     }
 
     @Test
-    public void addAuctionFailure()
+    public void testAddAuctionFailure()
     {
         Assert.assertEquals(auctionService.addAuction(null),"Auction is not added");
     }
 
 
     @Test
-    public void getAuction()
+    public void testGetAuctionSuccess()
     {
         auctionService.addAuction(auction);
         Assert.assertEquals(auctionService.getAuction(auction.getAuctionId()),auction);
@@ -63,14 +63,14 @@ public class AuctionServiceTest {
 
 
     @Test
-    public void getAuctionNoAuctionIsAdded()
+    public void testGetAuctionFailure()
     {
         Assert.assertNull(auctionService.getAuction(UUID.randomUUID()));
     }
 
 
     @Test
-    public  void placeBidShouldReturnSuccess()
+    public  void testPlaceBidShouldReturnSuccess()
     {
 
         auctionService.addAuction(auction);
@@ -82,7 +82,7 @@ public class AuctionServiceTest {
 
 
     @Test
-    public  void bidIsNotPlacedAfterAuctionClosed()throws Exception
+    public  void testPlaceBidShouldReturnAuctionIsClosed()throws Exception
     {
 
         auctionService.addAuction(auction);
@@ -97,7 +97,7 @@ public class AuctionServiceTest {
     }
 
     @Test
-    public  void placeBidInvalidAuction()
+    public  void testPlaceBidShouldReturnAuctionNotPresent()
     {
 
        // auctionService.addAuction(auction);
@@ -107,7 +107,7 @@ public class AuctionServiceTest {
     }
 
     @Test
-    public  void placeBidCurrentBidIsLowerThanPresentBid()
+    public  void testPlaceBidShouldReturnBidIsLower()
     {
 
         auctionService.addAuction(auction);

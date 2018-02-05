@@ -12,7 +12,7 @@ import java.util.UUID;
 public class AuctionTest {
 
     @Test
-    public void Auction_fields_ShouldNotNull() {
+    public void testAuction() {
         Auction auction;
         auction = new Auction(new Item("jet engines", "mach 3 speed"),
                               new Bid(UUID.randomUUID(), new BigDecimal(300)), 3);

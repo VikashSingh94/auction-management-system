@@ -38,14 +38,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserSuccess()
+    public void testGetUserSuccess()
     {
         userService.createUser(user);
         Assert.assertEquals(userService.getUser(user.getUserId()),user);
     }
 
     @Test
-    public  void getUserFailure()
+    public  void testGetUserFailure()
     {
         Assert.assertNull(userService.getUser(UUID.randomUUID()));
     }

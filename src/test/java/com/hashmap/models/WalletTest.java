@@ -7,7 +7,7 @@ import org.junit.Test;
 public class WalletTest {
 
     @Test
-    public void testCreateWallet() {
+    public void testWallet() {
 
         Wallet wallet = new Wallet();
         Assert.assertNotNull(wallet.getWalletId());

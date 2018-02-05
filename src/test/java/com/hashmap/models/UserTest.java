@@ -7,7 +7,7 @@ import org.junit.Test;
 public class UserTest {
 
     @Test
-    public void testCreateUser()
+    public void testUser()
     {
         User user = new User("abc", "abc@gmail.com");
 

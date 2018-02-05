@@ -10,7 +10,7 @@ import java.util.UUID;
 public class BidTest {
 
     @Test
-    public void Bid_Fields_ShouldNotNull() {
+    public void testBid() {
 
         Bid bid = new Bid(UUID.randomUUID(), new BigDecimal(100));
 
