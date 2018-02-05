@@ -1,5 +1,6 @@
 package com.hashmap.models;
 
+import com.hashmap.models.user.Wallet;
 import org.junit.Assert;
 import org.junit.Test;
 
