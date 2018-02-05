@@ -117,7 +117,7 @@ public   class InMemoryDataBase  {
     private static InMemoryDataBase single_instance = null;
 
     private  List<Auction> auctions = Collections.synchronizedList(new ArrayList<Auction>());
-    private  List<User> users = new LinkedList<>();
+    private  List<User> users = new ArrayList<>();
 
 
     // private constructor restricted to this class itself

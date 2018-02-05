@@ -1,4 +1,4 @@
-package com.hashmap.models;
+package com.hashmap.models.user;
 
 import java.util.UUID;
 

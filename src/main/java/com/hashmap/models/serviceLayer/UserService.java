@@ -8,17 +8,27 @@ import java.util.UUID;
 
 public class UserService
 {
+    DataAccessLayer dataAccessLayer;
 
-    DataAccessLayer dataAccessLayer = new InMemoryDAO();
+    public UserService()
+    {
+        dataAccessLayer = new InMemoryDAO();
+    }
+
 
     public String createUser(User user) {
-        if(dataAccessLayer.addUser(user))
-            return "user not added";
 
-        return "user added";
+        if(user!=null)
+            if(dataAccessLayer.addUser(user))
+                return "user added";
+
+        return "user not added";
+
     }
 
-    public User getUser(UUID userId) {
+    public User getUser(UUID userId)
+    {
         return dataAccessLayer.getUser(userId);
     }
+
 }

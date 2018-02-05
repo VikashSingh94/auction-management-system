@@ -1,4 +1,4 @@
-package com.hashmap.models;
+package com.hashmap.models.auction;
 
 public class Item {
 

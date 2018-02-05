@@ -1,4 +1,4 @@
-package com.hashmap.models;
+package com.hashmap.models.auction;
 
 import java.math.BigDecimal;
 import java.util.UUID;

@@ -28,9 +28,11 @@ public class AuctionService
 
     public String addAuction(Auction auction) {
 
-        if(dataAccessLayer.addAuction(auction)) {
-            timers.put(auction.getAuctionId(), new CountDownTimerService(auction.getEndTimeInSeconds(), auction.getAuctionId()));
-            return "Auction is added";
+        if(auction!= null) {
+            if (dataAccessLayer.addAuction(auction)) {
+                timers.put(auction.getAuctionId(), new CountDownTimerService(auction.getEndTimeInSeconds(), auction.getAuctionId()));
+                return "Auction is added";
+            }
         }
         return "Auction is not added";
     }
@@ -44,41 +46,6 @@ public class AuctionService
     public Auction getAuction(UUID auctionId) {
            return dataAccessLayer.getAuction(auctionId);
     }
-//
-//    public String placeBid(UUID auctionId,Bid bid)
-//    {
-//            if(dataAccessLayer.getAuction(auctionId).getIsAuctionOpen())
-//                return updateCurrentBid(auctionId, bid);
-//            else
-//                return "Auction is closed now ";
-//    }
-//
-//
-//    public String updateCurrentBid(UUID auctionId, Bid bid)
-//    {
-//
-//        List<Auction> auctions = dataAccessLayer.getAuctions();
-//
-//
-//        for(Auction auction:auctions)
-//        {
-//            if(auction.getAuctionId().equals(auctionId))
-//            {
-//                if(auction.getCurrentBid() == null || (auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
-//                {
-//                    auction.setCurrentBid(bid);
-//                    dataAccessLayer.addAuction(auction);
-//                    return "Bid placed";
-//                }
-//
-//                return "Bid price is lower than the current bid";
-//            }
-//        }
-//
-//        return "Trying to Bid on the Auction which is not present";
-//    }
-
-
 
     public String placeBid(UUID auctionId,Bid bid)
     {
