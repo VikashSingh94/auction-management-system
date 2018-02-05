@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 
@@ -44,6 +42,12 @@ public class AuctionServiceTest {
         Assert.assertEquals(auctionService.addAuction(auction),"Auction is added");
     }
 
+    @Test
+    public void addAuctionFailure()
+    {
+        Assert.assertEquals(auctionService.addAuction(null),"Auction is not added");
+    }
+
 
     @Test
     public void getAuctionSuccess()
@@ -60,53 +64,31 @@ public class AuctionServiceTest {
     }
 
 
-
     @Test
     public  void placeBidAuctionIsOpen()
     {
 
         auctionService.addAuction(auction);
-
-
-        List<Auction> auctions = auctionService.runningAuctions();
-
-        auction = auctions.get(0);
-
-        //check auction is open
-        Assert.assertEquals(auction.getIsAuctionOpen(),true);
-
         //place bid
         String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
-
-
         Assert.assertEquals(message,"Bid placed");
 
     }
 
 
     @Test
-    public  void BidIsNotPlaced_AfterClosing()throws Exception
+    public  void BidIsNotPlacedAfterAuctionClosed()throws Exception
     {
 
         auctionService.addAuction(auction);
 
-        List<Auction> openAuctions = auctionService.runningAuctions();
-
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(openAuctions.size());
-
-        Auction randomRunningAuction = openAuctions.get(randomIndex);
-
-
         long extraTime  = 1000;
-        sleep(randomRunningAuction.getEndTimeInSeconds()*1000 + extraTime);
-
-
+        sleep(auction.getEndTimeInSeconds()*1000 + extraTime);
 
         //place bid after auction get closed
-        auctionService.placeBid(randomRunningAuction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(800)));
+        String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(800)));
 
-        Assert.assertEquals(auctionService.getAuction(randomRunningAuction.getAuctionId()).getCurrentBid(), null);
+        Assert.assertEquals(message,"Auction is closed now ");
     }
 
 
@@ -117,19 +99,10 @@ public class AuctionServiceTest {
 
         auctionService.addAuction(auction);
 
-
-        List<Auction> auctions = auctionService.runningAuctions();
-
-        auction = auctions.get(0);
-
-        //check auction is open
-        Assert.assertEquals(auction.getIsAuctionOpen(),true);
-
         //place 1st bid
         auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
         //place 2nd  bid lower
         String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(300)));
-
 
         Assert.assertEquals(message,"Bid price is lower than the current bid");
 
@@ -148,29 +121,4 @@ public class AuctionServiceTest {
     }
 
 
-
-
 }
-
-
-//@Test
-//    public  void testPlaceBidWhenAuctionIsOpenIsAddedInDBMS()
-//    {
-//
-//        auctionService.addAuction(auction);
-//
-//
-//        List<Auction> auctions = auctionService.runningAuctions();
-//
-//        auction = auctions.get(0);
-//
-//        //check auction is open
-//        Assert.assertEquals(auction.getIsAuctionOpen(),true);
-//
-//        //place bid
-//        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
-//
-//
-//        Assert.assertNotNull(auctionService.getAuction(auction.getAuctionId()).getCurrentBid());
-//
-//    }
