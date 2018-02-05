@@ -1,15 +1,19 @@
-package com.hashmap.models;
+package com.hashmap.models.serviceLayer;
+
+
+import com.hashmap.models.dataAccessLayer.DataAccessLayer;
+import com.hashmap.models.dataAccessLayer.InMemoryDAO;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class CountDownTimer{
+public class CountDownTimerService {
 
     final private Timer timer;
     private int secondsLeft;
 
-    public CountDownTimer(int seconds, final UUID auctionID) {
+    public CountDownTimerService(int seconds, final UUID auctionID) {
         timer = new Timer();
         secondsLeft =  seconds;
         // Decrease seconds left every 1 second.
@@ -19,7 +23,8 @@ public class CountDownTimer{
                 secondsLeft--;
                 if (secondsLeft == 0) {
                     timer.cancel();
-                    DataBase.updateIsAuctionOpen(auctionID,false);
+                    DataAccessLayer dataAccessLayer = new InMemoryDAO();
+                   dataAccessLayer.updateIsAuctionOpen(auctionID, false);
                 }
             }
         }, 0, 1000);
