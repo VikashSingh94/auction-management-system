@@ -4,6 +4,7 @@ import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
 import com.hashmap.models.auction.Item;
 import com.hashmap.models.serviceLayer.AuctionService;
+import com.hashmap.models.serviceLayer.UserService;
 import com.hashmap.models.user.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,6 +21,7 @@ public class AuctionServiceTest {
 
     User seller;
     User buyer;
+    UserService userService;
 
     AuctionService auctionService;
     Auction auction;
@@ -29,6 +31,9 @@ public class AuctionServiceTest {
     {
         seller = new User("abc", "abc@gmail.com");
         buyer  = new User("xyz","xyz@gmail.com");
+
+        userService.createUser(seller);
+        userService.createUser(buyer);
 
         auctionService = new AuctionService();
 
@@ -50,7 +55,7 @@ public class AuctionServiceTest {
 
 
     @Test
-    public void getAuctionSuccess()
+    public void getAuction()
     {
         auctionService.addAuction(auction);
         Assert.assertEquals(auctionService.getAuction(auction.getAuctionId()),auction);
@@ -58,14 +63,14 @@ public class AuctionServiceTest {
 
 
     @Test
-    public void getAuctionFailure()
+    public void getAuctionNoAuctionIsAdded()
     {
         Assert.assertNull(auctionService.getAuction(UUID.randomUUID()));
     }
 
 
     @Test
-    public  void placeBidAuctionIsOpen()
+    public  void placeBidShouldReturnSuccess()
     {
 
         auctionService.addAuction(auction);
@@ -77,7 +82,7 @@ public class AuctionServiceTest {
 
 
     @Test
-    public  void BidIsNotPlacedAfterAuctionClosed()throws Exception
+    public  void bidIsNotPlacedAfterAuctionClosed()throws Exception
     {
 
         auctionService.addAuction(auction);
@@ -91,10 +96,18 @@ public class AuctionServiceTest {
         Assert.assertEquals(message,"Auction is closed now ");
     }
 
+    @Test
+    public  void placeBidInvalidAuction()
+    {
 
+       // auctionService.addAuction(auction);
+        String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        Assert.assertEquals(message,"Trying to Bid on the Auction which is not present");
+
+    }
 
     @Test
-    public  void placeBidCurrentBidIsLower()
+    public  void placeBidCurrentBidIsLowerThanPresentBid()
     {
 
         auctionService.addAuction(auction);
@@ -107,18 +120,5 @@ public class AuctionServiceTest {
         Assert.assertEquals(message,"Bid price is lower than the current bid");
 
     }
-
-
-
-    @Test
-    public  void placeBidAuctionNotPresent()
-    {
-
-       // auctionService.addAuction(auction);
-        String message = auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
-        Assert.assertEquals(message,"Trying to Bid on the Auction which is not present");
-
-    }
-
 
 }
