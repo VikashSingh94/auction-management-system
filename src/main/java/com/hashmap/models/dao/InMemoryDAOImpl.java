@@ -1,13 +1,13 @@
-package com.hashmap.models.dataAccessLayer;
+package com.hashmap.models.dao;
 
 import com.hashmap.models.auction.Auction;
-import com.hashmap.models.storage.InMemoryDataBase;
+import com.hashmap.models.dbms.InMemoryDataBase;
 import com.hashmap.models.user.User;
 
 import java.util.List;
 import java.util.UUID;
 
-public class InMemoryDAO implements DataAccessLayer {
+public class InMemoryDAOImpl implements InMemoryDoa {
 
     private InMemoryDataBase inMemoryDataBase = InMemoryDataBase.getInstance();
 

@@ -1,14 +1,13 @@
-package com.hashmap.models.dataAccessLayer;
+package com.hashmap.models.dao;
 
 
 import com.hashmap.models.auction.Auction;
-import com.hashmap.models.auction.Bid;
 import com.hashmap.models.user.User;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface DataAccessLayer
+public interface InMemoryDoa
 {
     List getAuctions();
 
