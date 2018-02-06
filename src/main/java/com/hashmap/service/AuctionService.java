@@ -1,9 +1,9 @@
-package com.hashmap.models.service;
+package com.hashmap.service;
 
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
-import com.hashmap.models.dao.InMemoryDoa;
-import com.hashmap.models.dao.InMemoryDAOImpl;
+import com.hashmap.dao.InMemoryDoa;
+import com.hashmap.dao.InMemoryDAOImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class AuctionService
 {
 
     InMemoryDoa dataAccessLayer;
-    Map<UUID,CountDownTimerService> timers = new TreeMap<>();
+    Map<UUID,TimerService> timers = new TreeMap<>();
 
 
     public AuctionService(){
@@ -29,7 +29,10 @@ public class AuctionService
 
         if(auction!= null) {
             if (dataAccessLayer.addAuction(auction)) {
-                timers.put(auction.getAuctionId(), new CountDownTimerService(auction.getEndTimeInSeconds(), auction.getAuctionId()));
+                Listener listener = new AuctionEndListener(auction.getAuctionId());
+
+                timers.put(auction.getAuctionId(), new TimerService(auction.getEndTimeInSeconds(), listener));
+
                 return "Auction is added";
             }
         }

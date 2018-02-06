@@ -1,7 +1,7 @@
-package com.hashmap.models.dao;
+package com.hashmap.dao;
 
 import com.hashmap.models.auction.Auction;
-import com.hashmap.models.dbms.InMemoryDataBase;
+import com.hashmap.dbms.InMemoryDataBase;
 import com.hashmap.models.user.User;
 
 import java.util.List;

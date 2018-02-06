@@ -1,4 +1,4 @@
-package com.hashmap.models.dao;
+package com.hashmap.dao;
 
 
 import com.hashmap.models.auction.Auction;

@@ -1,7 +1,7 @@
-package com.hashmap.models.service;
+package com.hashmap.service;
 
-import com.hashmap.models.dao.InMemoryDoa;
-import com.hashmap.models.dao.InMemoryDAOImpl;
+import com.hashmap.dao.InMemoryDoa;
+import com.hashmap.dao.InMemoryDAOImpl;
 import com.hashmap.models.user.User;
 
 import java.util.UUID;

@@ -10,7 +10,7 @@ public class Auction {
     private boolean isAuctionOpen;
     private Bid currentBid;
     final private Bid openingBid;
-   // private CountDownTimerService countDownTimer;
+   // private TimerService countDownTimer;
 
 
     public Auction(Item item, Bid openingBid, int endTimeInSecond) {
@@ -20,7 +20,7 @@ public class Auction {
         this.endTimeInSeconds = endTimeInSecond;
         isAuctionOpen = true;
         currentBid = null;
-      //  countDownTimer = new CountDownTimerService(endTimeInSeconds, this.auctionId);
+      //  countDownTimer = new TimerService(endTimeInSeconds, this.auctionId);
     }
 
     public void setCurrentBid(Bid currentBid) {

@@ -104,7 +104,7 @@
 //
 //}
 
-package com.hashmap.models.storage;
+package com.hashmap.dbms;
 
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.user.User;
