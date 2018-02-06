@@ -1,10 +1,9 @@
-package com.hashmap.models.serviceLayer;
-
+package com.hashmap.models.service;
 
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
-import com.hashmap.models.dataAccessLayer.DataAccessLayer;
-import com.hashmap.models.dataAccessLayer.InMemoryDAO;
+import com.hashmap.models.dao.InMemoryDoa;
+import com.hashmap.models.dao.InMemoryDAOImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -17,12 +16,12 @@ import static java.util.stream.Collectors.toList;
 public class AuctionService
 {
 
-    DataAccessLayer dataAccessLayer;
+    InMemoryDoa dataAccessLayer;
     Map<UUID,CountDownTimerService> timers = new TreeMap<>();
 
 
     public AuctionService(){
-      dataAccessLayer = new InMemoryDAO();
+      dataAccessLayer = new InMemoryDAOImpl();
     }
 
 
@@ -74,6 +73,5 @@ public class AuctionService
         return "Bid price is lower than the current bid";
 
     }
-
 
 }

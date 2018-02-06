@@ -1,18 +1,18 @@
-package com.hashmap.models.serviceLayer;
+package com.hashmap.models.service;
 
-import com.hashmap.models.dataAccessLayer.DataAccessLayer;
-import com.hashmap.models.dataAccessLayer.InMemoryDAO;
+import com.hashmap.models.dao.InMemoryDoa;
+import com.hashmap.models.dao.InMemoryDAOImpl;
 import com.hashmap.models.user.User;
 
 import java.util.UUID;
 
 public class UserService
 {
-    DataAccessLayer dataAccessLayer;
+    InMemoryDoa dataAccessLayer;
 
     public UserService()
     {
-        dataAccessLayer = new InMemoryDAO();
+        dataAccessLayer = new InMemoryDAOImpl();
     }
 
 

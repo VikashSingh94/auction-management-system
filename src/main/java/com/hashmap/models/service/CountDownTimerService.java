@@ -1,8 +1,8 @@
-package com.hashmap.models.serviceLayer;
+package com.hashmap.models.service;
 
 
-import com.hashmap.models.dataAccessLayer.DataAccessLayer;
-import com.hashmap.models.dataAccessLayer.InMemoryDAO;
+import com.hashmap.models.dao.InMemoryDoa;
+import com.hashmap.models.dao.InMemoryDAOImpl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,7 +23,7 @@ public class CountDownTimerService {
                 secondsLeft--;
                 if (secondsLeft == 0) {
                     timer.cancel();
-                    DataAccessLayer dataAccessLayer = new InMemoryDAO();
+                    InMemoryDoa dataAccessLayer = new InMemoryDAOImpl();
                    dataAccessLayer.updateIsAuctionOpen(auctionID, false);
                 }
             }
