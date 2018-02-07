@@ -52,7 +52,7 @@ public class TimerService {
                 secondsLeft--;
                 if (secondsLeft == 0) {
                     timer.cancel();
-                    listener.onEvent();
+                    listener.onAuctionEnd();
                 }
             }
         }, 0, 1000);

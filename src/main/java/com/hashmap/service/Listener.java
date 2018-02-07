@@ -8,20 +8,20 @@ import java.util.UUID;
 
 interface Listener
 {
-    void onEvent();
+    void onAuctionEnd();
 }
 
-class AuctionEndListener implements Listener {
+class AuctionListener implements Listener {
 
     UUID auctionId;
 
-    public AuctionEndListener(UUID auctionId)
+    public AuctionListener(UUID auctionId)
     {
         this.auctionId = auctionId;
     }
 
     @Override
-    public void onEvent()
+    public void onAuctionEnd()
     {
         InMemoryDoa dataAccessLayer = new InMemoryDAOImpl();
         dataAccessLayer.updateIsAuctionOpen(this.auctionId, false);

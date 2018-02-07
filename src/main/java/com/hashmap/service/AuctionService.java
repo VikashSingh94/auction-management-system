@@ -29,7 +29,7 @@ public class AuctionService
 
         if(auction!= null) {
             if (dataAccessLayer.addAuction(auction)) {
-                Listener listener = new AuctionEndListener(auction.getAuctionId());
+                Listener listener = new AuctionListener(auction.getAuctionId());
 
                 timers.put(auction.getAuctionId(), new TimerService(auction.getEndTimeInSeconds(), listener));
 
