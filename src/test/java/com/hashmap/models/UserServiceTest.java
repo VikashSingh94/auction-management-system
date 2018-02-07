@@ -1,6 +1,6 @@
 package com.hashmap.models;
 
-import com.hashmap.models.serviceLayer.UserService;
+import com.hashmap.service.UserService;
 import com.hashmap.models.user.User;
 import org.junit.Assert;
 import org.junit.Before;

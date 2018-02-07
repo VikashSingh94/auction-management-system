@@ -3,9 +3,8 @@ package com.hashmap.models;
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
 import com.hashmap.models.auction.Item;
-import com.hashmap.models.serviceLayer.AuctionService;
-import com.hashmap.models.serviceLayer.UserService;
 import com.hashmap.models.user.User;
+import com.hashmap.service.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +31,8 @@ public class AuctionServiceTest {
         seller = new User("abc", "abc@gmail.com");
         buyer  = new User("xyz","xyz@gmail.com");
 
+        UserService userService = new UserService();
+
         userService.createUser(seller);
         userService.createUser(buyer);
 
@@ -45,6 +46,7 @@ public class AuctionServiceTest {
     public void testAddAuctionSuccess()
     {
         Assert.assertEquals(auctionService.addAuction(auction),"Auction is added");
+
     }
 
     @Test
