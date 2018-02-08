@@ -1,4 +1,4 @@
-package com.hashmap.models;
+package com.hashmap.service;
 
 import com.hashmap.service.UserService;
 import com.hashmap.models.user.User;

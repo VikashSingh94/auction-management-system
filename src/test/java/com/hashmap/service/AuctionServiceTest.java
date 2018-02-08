@@ -1,10 +1,9 @@
-package com.hashmap.models;
+package com.hashmap.service;
 
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
 import com.hashmap.models.auction.Item;
 import com.hashmap.models.user.User;
-import com.hashmap.service.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +30,14 @@ public class AuctionServiceTest {
         seller = new User("abc", "abc@gmail.com");
         buyer  = new User("xyz","xyz@gmail.com");
 
-        UserService userService = new UserService();
+        userService = new UserService();
 
         userService.createUser(seller);
         userService.createUser(buyer);
 
         auctionService = new AuctionService();
 
-        auction = new Auction(new Item("jet engines", "mach 3 "), new Bid(seller.getUserId(), new BigDecimal(100)), 5);
+        auction = new Auction(new Item("jet engines", "mach 3 "), seller.getUserId(), new BigDecimal(100), 5);
 
     }
 

@@ -15,5 +15,6 @@ public class UserTest {
         Assert.assertNotNull(user.getUserName());
         Assert.assertNotNull(user.getContactDetails());
     }
+
 }
 

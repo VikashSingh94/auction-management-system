@@ -15,11 +15,11 @@ public class AuctionTest {
     public void testAuction() {
         Auction auction;
         auction = new Auction(new Item("jet engines", "mach 3 speed"),
-                              new Bid(UUID.randomUUID(), new BigDecimal(300)), 3);
+                              UUID.randomUUID(), new BigDecimal(300), 3);
 
         Assert.assertNotNull(auction.getAuctionId());
-        Assert.assertNotNull(auction.getOpeningBid());
-
+        Assert.assertNotNull(auction.getSellerId());
+        Assert.assertNotNull(auction.getOpeningAuctionPrice());
         Assert.assertNotNull(auction.getItem().getName());
         Assert.assertNotNull(auction.getItem().getDescription());
         }

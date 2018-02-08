@@ -10,7 +10,6 @@ public class WalletTest {
     public void testWallet() {
 
         Wallet wallet = new Wallet();
-        Assert.assertNotNull(wallet.getWalletId());
         Assert.assertNotNull(wallet.getTotalBalanceInWallet());
 
     }
