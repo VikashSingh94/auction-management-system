@@ -1,22 +1,25 @@
 package com.hashmap.models.auction;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Auction {
 
     private UUID auctionId;
+    private UUID sellerId;
     private Item item;
     private int endTimeInSeconds;
     private boolean isAuctionOpen;
     private Bid currentBid;
-    final private Bid openingBid;
+    final private BigDecimal openingAuctionPrice;
    // private TimerService countDownTimer;
 
 
-    public Auction(Item item, Bid openingBid, int endTimeInSecond) {
+    public Auction(Item item, UUID sellerId, BigDecimal openingAuctionPrice, int endTimeInSecond) {
         this.auctionId = UUID.randomUUID();
         this.item = item;
-        this.openingBid = openingBid;
+        this.sellerId = sellerId;
+        this.openingAuctionPrice = openingAuctionPrice;
         this.endTimeInSeconds = endTimeInSecond;
         isAuctionOpen = true;
         currentBid = null;
@@ -35,8 +38,8 @@ public class Auction {
         return item;
     }
 
-    public Bid getOpeningBid() {
-        return openingBid;
+    public BigDecimal getOpeningAuctionPrice() {
+        return openingAuctionPrice;
     }
 
     public int getEndTimeInSeconds() {
@@ -53,5 +56,9 @@ public class Auction {
 
     public Bid getCurrentBid() {
         return currentBid;
+    }
+
+    public UUID getSellerId() {
+        return sellerId;
     }
 }

@@ -5,6 +5,7 @@ import com.hashmap.models.auction.Bid;
 import com.hashmap.dao.InMemoryDoa;
 import com.hashmap.dao.InMemoryDAOImpl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -54,6 +55,14 @@ public class AuctionService
         Auction auction = dataAccessLayer.getAuction(auctionId);
 
         if( auction!= null) {
+            PaymentGateWay paymentGateWay = new PaymentGateWayImpl();
+
+            UUID userId = bid.getUserId();
+            BigDecimal bidPrice = bid.getBidPrice();
+
+            if(paymentGateWay.checkSufficientBalance(userId,bidPrice).equals(Status.NOT_SUFFICIENTBALANCE))
+                return "Not SufficientBalance";
+
             if (auction.getIsAuctionOpen())
                 return updateCurrentBid(auction,bid);
             else
@@ -65,14 +74,23 @@ public class AuctionService
     }
 
 
+
     public String updateCurrentBid(Auction auction, Bid bid)
     {
-        if(auction.getCurrentBid() == null || (auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
+        if(auction.getCurrentBid() == null)
         {
-            auction.setCurrentBid(bid);
-            dataAccessLayer.addAuction(auction);
+            if(auction.getOpeningAuctionPrice().compareTo(bid.getBidPrice()) < 0) {
+                dataAccessLayer.updateCurrentBid(auction.getAuctionId(),bid);
+                return "Bid placed";
+            }
+
+        }
+        else if( (auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
+        {
+            dataAccessLayer.updateCurrentBid(auction.getAuctionId(),bid);
             return "Bid placed";
         }
+
         return "Bid price is lower than the current bid";
 
     }

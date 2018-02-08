@@ -107,8 +107,10 @@
 package com.hashmap.dbms;
 
 import com.hashmap.models.auction.Auction;
+import com.hashmap.models.auction.Bid;
 import com.hashmap.models.user.User;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public   class InMemoryDataBase  {
@@ -217,4 +219,26 @@ public   class InMemoryDataBase  {
        return false;
     }
 
+    public boolean updateCurrentBid(UUID auctionId, Bid bid) {
+
+        for (Auction auction : auctions) {
+            if(auction.getAuctionId().equals(auctionId))
+            {
+                auction.setCurrentBid(bid);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean updateTotalBalanced(UUID userId, BigDecimal amount) {
+
+        for (User user : users) {
+            if(user.getUserId().equals(userId)) {
+                user.getWallet().setTotalBalance(amount);
+                return true;
+            }
+        }
+        return  false;
+    }
 }

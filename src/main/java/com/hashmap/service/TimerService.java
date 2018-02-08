@@ -53,6 +53,7 @@ public class TimerService {
                 if (secondsLeft == 0) {
                     timer.cancel();
                     listener.onAuctionEnd();
+                    listener.paymentProcess();
                 }
             }
         }, 0, 1000);

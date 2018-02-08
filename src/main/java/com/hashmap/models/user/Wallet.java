@@ -1,30 +1,20 @@
 package com.hashmap.models.user;
 
 import java.math.BigDecimal;
-import java.util.UUID;
-
 
 public class Wallet {
 
-    private BigDecimal totalBalanceInWallet;
-    private UUID walletId;
-
-    public Wallet(BigDecimal totalBalanceInWallet) {
-        this.totalBalanceInWallet = totalBalanceInWallet;
-        this.walletId = UUID.randomUUID();
-    }
+    private BigDecimal totalBalance;
 
     public Wallet() {
-        this.totalBalanceInWallet = new BigDecimal(0);
-        this.walletId = UUID.randomUUID();
+        this.totalBalance = new BigDecimal(0);
     }
 
     public BigDecimal getTotalBalanceInWallet() {
-        return totalBalanceInWallet;
+        return totalBalance;
     }
 
-
-    public UUID getWalletId() {
-        return walletId;
+    public void setTotalBalance(BigDecimal totalBalanceInWallet) {
+        this.totalBalance = totalBalanceInWallet;
     }
 }
