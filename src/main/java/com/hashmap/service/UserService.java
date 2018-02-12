@@ -16,13 +16,13 @@ public class UserService
     }
 
 
-    public String createUser(User user) {
+    public Status createUser(User user) {
 
         if(user!=null)
             if(dataAccessLayer.addUser(user))
-                return "user added";
+                return Status.USER_ADDED;
 
-        return "user not added";
+        return Status.USER_NOT_ADDED;
 
     }
 

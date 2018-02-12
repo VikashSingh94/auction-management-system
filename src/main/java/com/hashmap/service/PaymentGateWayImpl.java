@@ -2,7 +2,6 @@ package com.hashmap.service;
 
 import com.hashmap.dao.InMemoryDAOImpl;
 import com.hashmap.dao.InMemoryDoa;
-import com.hashmap.models.auction.Bid;
 import com.hashmap.models.user.User;
 
 import java.math.BigDecimal;
@@ -28,7 +27,7 @@ public class PaymentGateWayImpl implements PaymentGateWay {
             else
                 return Status.AMOUNT_NOT_ADDED;
         }
-        //TODO: rename to user not present
+        //TODO: rename to user not present ,throw Exception
         else
             return Status.AMOUNT_NOT_ADDED;
     }

@@ -1,5 +1,8 @@
 package com.hashmap.service;
 
+import com.hashmap.exception.InSufficientBalance;
+import com.hashmap.exception.InvalidAuction;
+import com.hashmap.exception.InvalidBid;
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
 import com.hashmap.dao.InMemoryDoa;
@@ -26,7 +29,7 @@ public class AuctionService
     }
 
 
-    public String addAuction(Auction auction) {
+    public Status addAuction(Auction auction) {
 
         if(auction!= null) {
             if (dataAccessLayer.addAuction(auction)) {
@@ -34,10 +37,10 @@ public class AuctionService
 
                 timers.put(auction.getAuctionId(), new TimerService(auction.getEndTimeInSeconds(), listener));
 
-                return "Auction is added";
+                return Status.AUCTION_ADDED;
             }
         }
-        return "Auction is not added";
+        return Status.AUCTION_NOT_ADDED;
     }
 
     public List<Auction> runningAuctions() {
@@ -50,7 +53,7 @@ public class AuctionService
            return dataAccessLayer.getAuction(auctionId);
     }
 
-    public String placeBid(UUID auctionId,Bid bid)
+    public Status placeBid(UUID auctionId,Bid bid)throws Exception
     {
         Auction auction = dataAccessLayer.getAuction(auctionId);
 
@@ -61,37 +64,37 @@ public class AuctionService
             BigDecimal bidPrice = bid.getBidPrice();
 
             if(paymentGateWay.checkSufficientBalance(userId,bidPrice).equals(Status.NOT_SUFFICIENTBALANCE))
-                return "Not SufficientBalance";
+                throw new InSufficientBalance("Not SufficientBalance");
 
             if (auction.getIsAuctionOpen())
                 return updateCurrentBid(auction,bid);
             else
-                return "Auction is closed now ";
+                throw new InvalidAuction("Auction is closed now ");
         }
         else {
-            return "Trying to Bid on the Auction which is not present";
+            throw new InvalidAuction("Trying to Bid on the Auction which is not present");
         }
     }
 
 
 
-    public String updateCurrentBid(Auction auction, Bid bid)
+    public Status updateCurrentBid(Auction auction, Bid bid)throws InvalidBid
     {
         if(auction.getCurrentBid() == null)
         {
             if(auction.getOpeningAuctionPrice().compareTo(bid.getBidPrice()) < 0) {
                 dataAccessLayer.updateCurrentBid(auction.getAuctionId(),bid);
-                return "Bid placed";
+                return Status.BID_ADDED;
             }
 
         }
         else if( (auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
         {
             dataAccessLayer.updateCurrentBid(auction.getAuctionId(),bid);
-            return "Bid placed";
+            return Status.BID_ADDED;
         }
 
-        return "Bid price is lower than the current bid";
+        throw new InvalidBid("Bid price is lower than the current bid");
 
     }
 

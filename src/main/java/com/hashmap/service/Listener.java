@@ -38,11 +38,14 @@ class AuctionListener implements Listener {
 
         Auction auction = inMemoryDoa.getAuction(this.auctionId);
 
-        UUID payerId = auction.getCurrentBid().getUserId();
-        UUID payeeId = auction.getSellerId();
-        BigDecimal paymentAmount = auction.getCurrentBid().getBidPrice();
+        if(auction.getCurrentBid() != null)
+        {
+            UUID payerId = auction.getCurrentBid().getUserId();
+            UUID payeeId = auction.getSellerId();
+            BigDecimal paymentAmount = auction.getCurrentBid().getBidPrice();
+            paymentGateWay.pay(payerId, payeeId, paymentAmount);
+        }
 
-        paymentGateWay.pay(payerId,payeeId,paymentAmount);
     }
 
 }
