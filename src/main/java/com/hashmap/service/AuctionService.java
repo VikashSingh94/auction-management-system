@@ -21,27 +21,39 @@ public class AuctionService
 {
 
     InMemoryDoa dataAccessLayer;
+    PaymentGateWay paymentGateWay;
     Map<UUID,TimerService> timers = new TreeMap<>();
 
 
+    //Reduce the dependency,Initialize in constructor,
+    //that member function can access it.
     public AuctionService(){
       dataAccessLayer = new InMemoryDAOImpl();
+      paymentGateWay = new PaymentGateWayImpl();
     }
 
 
+    //Function should be doing one thing
+    //So,we created function StartTimeWithListenerCallBack
     public Status addAuction(Auction auction) {
 
         if(auction!= null) {
-            if (dataAccessLayer.addAuction(auction)) {
-                Listener listener = new AuctionListener(auction.getAuctionId());
-
-                timers.put(auction.getAuctionId(), new TimerService(auction.getEndTimeInSeconds(), listener));
-
+            if (dataAccessLayer.addAuction(auction))
+            {
+                startAuctionTimerWithListenerCallBack(auction);
                 return Status.AUCTION_ADDED;
             }
         }
         return Status.AUCTION_NOT_ADDED;
     }
+
+    public  void startAuctionTimerWithListenerCallBack(Auction auction)
+    {
+        Listener listener = new AuctionListener(auction.getAuctionId());
+        timers.put(auction.getAuctionId(), new TimerService(auction.getEndTimeInSeconds(), listener));
+    }
+
+
 
     public List<Auction> runningAuctions() {
 
@@ -53,12 +65,13 @@ public class AuctionService
            return dataAccessLayer.getAuction(auctionId);
     }
 
+
     public Status placeBid(UUID auctionId,Bid bid)throws Exception
     {
         Auction auction = dataAccessLayer.getAuction(auctionId);
 
         if( auction!= null) {
-            PaymentGateWay paymentGateWay = new PaymentGateWayImpl();
+
 
             UUID userId = bid.getUserId();
             BigDecimal bidPrice = bid.getBidPrice();
