@@ -54,11 +54,8 @@ public class AuctionService
     }
 
 
-
     public List<Auction> runningAuctions() {
-
-       List<Auction> auctions = dataAccessLayer.getAuctions();
-       return auctions.stream().filter(auction ->(auction.getIsAuctionOpen())).collect(toList());
+        return dataAccessLayer.getRunningAuction();
     }
 
     public Auction getAuction(UUID auctionId) {
@@ -66,49 +63,55 @@ public class AuctionService
     }
 
 
+    //function should have one level of abstraction
+    //refactor the placeBid method and create the 4 method
+
     public Status placeBid(UUID auctionId,Bid bid)throws Exception
     {
         Auction auction = dataAccessLayer.getAuction(auctionId);
 
-        if( auction!= null) {
-
-
-            UUID userId = bid.getUserId();
-            BigDecimal bidPrice = bid.getBidPrice();
-
-            if(paymentGateWay.checkSufficientBalance(userId,bidPrice).equals(Status.NOT_SUFFICIENTBALANCE))
-                throw new InSufficientBalance("Not SufficientBalance");
+        if( auction == null)
+            throw new InvalidAuction("Trying to Bid on the Auction which is not present");
+        else
+        {
+            checkBalance(bid);
 
             if (auction.getIsAuctionOpen())
                 return updateCurrentBid(auction,bid);
             else
                 throw new InvalidAuction("Auction is closed now ");
         }
-        else {
-            throw new InvalidAuction("Trying to Bid on the Auction which is not present");
-        }
     }
 
+    private void checkBalance(Bid bid) throws InSufficientBalance {
+        UUID userId = bid.getUserId();
+        BigDecimal bidPrice = bid.getBidPrice();
+
+        if(paymentGateWay.checkSufficientBalance(userId,bidPrice).equals(Status.NOT_SUFFICIENTBALANCE))
+            throw new InSufficientBalance("Not SufficientBalance");
+    }
 
 
     public Status updateCurrentBid(Auction auction, Bid bid)throws InvalidBid
     {
         if(auction.getCurrentBid() == null)
-        {
-            if(auction.getOpeningAuctionPrice().compareTo(bid.getBidPrice()) < 0) {
-                dataAccessLayer.updateCurrentBid(auction.getAuctionId(),bid);
-                return Status.BID_ADDED;
-            }
+            if(auction.getOpeningAuctionPrice().compareTo(bid.getBidPrice()) < 0)
+                return addBidToAuction(auction.getAuctionId(),bid);
 
-        }
-        else if( (auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
-        {
-            dataAccessLayer.updateCurrentBid(auction.getAuctionId(),bid);
-            return Status.BID_ADDED;
-        }
+        else if((auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
+            return addBidToAuction(auction.getAuctionId(),bid);
 
         throw new InvalidBid("Bid price is lower than the current bid");
 
+    }
+
+
+    private Status addBidToAuction(UUID auctionId, Bid bid) {
+
+        if(dataAccessLayer.updateCurrentBid(auctionId,bid))
+            return Status.BID_ADDED;
+        else
+            return Status.BID_NOT_ADDED;
     }
 
 }
