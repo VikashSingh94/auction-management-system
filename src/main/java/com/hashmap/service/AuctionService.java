@@ -14,22 +14,20 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-
 
 public class AuctionService
 {
 
-    InMemoryDoa dataAccessLayer;
+    InMemoryDoa inMemoryDoa;
     PaymentGateWay paymentGateWay;
     Map<UUID,TimerService> timers = new TreeMap<>();
 
 
     //Reduce the dependency,Initialize in constructor,
-    //that member function can access it.
+    //such that all member function can access it.
     public AuctionService(){
-      dataAccessLayer = new InMemoryDAOImpl();
-      paymentGateWay = new PaymentGateWayImpl();
+        inMemoryDoa = new InMemoryDAOImpl();
+        paymentGateWay = new PaymentGateWayImpl();
     }
 
 
@@ -38,7 +36,7 @@ public class AuctionService
     public Status addAuction(Auction auction) {
 
         if(auction!= null) {
-            if (dataAccessLayer.addAuction(auction))
+            if (inMemoryDoa.addAuction(auction))
             {
                 startAuctionTimerWithListenerCallBack(auction);
                 return Status.AUCTION_ADDED;
@@ -55,11 +53,11 @@ public class AuctionService
 
 
     public List<Auction> runningAuctions() {
-        return dataAccessLayer.getRunningAuction();
+        return inMemoryDoa.getRunningAuction();
     }
 
-    public Auction getAuction(UUID auctionId) {
-           return dataAccessLayer.getAuction(auctionId);
+    public Auction getAuction(UUID auctionId)throws InvalidAuction {
+        return inMemoryDoa.getAuction(auctionId);
     }
 
 
@@ -68,19 +66,14 @@ public class AuctionService
 
     public Status placeBid(UUID auctionId,Bid bid)throws Exception
     {
-        Auction auction = dataAccessLayer.getAuction(auctionId);
+        Auction auction = inMemoryDoa.getAuction(auctionId);
 
-        if( auction == null)
-            throw new InvalidAuction("Trying to Bid on the Auction which is not present");
+        checkBalance(bid);
+
+        if (auction.getIsAuctionOpen())
+            return updateCurrentBid(auction,bid);
         else
-        {
-            checkBalance(bid);
-
-            if (auction.getIsAuctionOpen())
-                return updateCurrentBid(auction,bid);
-            else
-                throw new InvalidAuction("Auction is closed now ");
-        }
+            throw new InvalidAuction("Auction is closed now ");
     }
 
     private void checkBalance(Bid bid) throws InSufficientBalance {
@@ -91,24 +84,43 @@ public class AuctionService
             throw new InSufficientBalance("Not SufficientBalance");
     }
 
-
-    public Status updateCurrentBid(Auction auction, Bid bid)throws InvalidBid
+    //refactor updateCurrentBid to follow same level of abstraction rule
+    private Status updateCurrentBid(Auction auction, Bid bid)throws InvalidBid
     {
+        //if No bid has been placed yet
         if(auction.getCurrentBid() == null)
-            if(auction.getOpeningAuctionPrice().compareTo(bid.getBidPrice()) < 0)
-                return addBidToAuction(auction.getAuctionId(),bid);
+            return compareOpeningAndPresentBidAmount(auction,bid);
+        else
+            return compareCurrentAndPresentBidAmount(auction,bid);
+    }
 
-        else if((auction.getCurrentBid().getBidPrice().compareTo(bid.getBidPrice()) < 0))
+    private Status compareCurrentAndPresentBidAmount(Auction auction, Bid bid) throws InvalidBid
+    {
+
+        BigDecimal currentBidPrice = auction.getCurrentBid().getBidPrice();
+        BigDecimal presentBidPrice = bid.getBidPrice();
+
+        if((currentBidPrice.compareTo(presentBidPrice) < 0))
             return addBidToAuction(auction.getAuctionId(),bid);
+        else
+            throw new InvalidBid("Bid price is lower than the current bid");
+    }
 
-        throw new InvalidBid("Bid price is lower than the current bid");
+    private Status compareOpeningAndPresentBidAmount(Auction auction, Bid bid) throws InvalidBid
+    {
+        BigDecimal openingAuctionPrice = auction.getOpeningAuctionPrice();
+        BigDecimal bidPrice = bid.getBidPrice();
 
+        if (openingAuctionPrice.compareTo(bidPrice) < 0)
+            return addBidToAuction(auction.getAuctionId(), bid);
+        else
+            throw new InvalidBid("Bid price is lower than the current bid");
     }
 
 
     private Status addBidToAuction(UUID auctionId, Bid bid) {
 
-        if(dataAccessLayer.updateCurrentBid(auctionId,bid))
+        if(inMemoryDoa.updateCurrentBid(auctionId, bid))
             return Status.BID_ADDED;
         else
             return Status.BID_NOT_ADDED;
