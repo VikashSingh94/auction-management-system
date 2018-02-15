@@ -33,10 +33,9 @@ public class AuctionServiceTest {
     Auction auction;
 
     @Before
-    public void beforeEachTestCase()
-    {
+    public void beforeEachTestCase() {
         seller = new User("abc", "abc@gmail.com");
-        buyer  = new User("xyz","xyz@gmail.com");
+        buyer = new User("xyz", "xyz@gmail.com");
 
         userService = new UserService();
 
@@ -46,105 +45,103 @@ public class AuctionServiceTest {
         auctionService = new AuctionService();
         paymentGateWay = new PaymentGateWayImpl();
 
-        auction = new Auction(new Item("jet engines", "mach 3 "), seller.getUserId(), new BigDecimal(100), 5);
-
+        auction = new Auction(new Item("jet engines", "mach 3 "),
+                              seller.getUserId(), new BigDecimal(100), 5);
     }
-
-    @Test
-    public void testAddAuctionSuccess()
-    {
-        Assert.assertEquals(auctionService.addAuction(auction),Status.AUCTION_ADDED);
-
-    }
-
-    @Test
-    public void testAddAuctionFailure()
-    {
-        Assert.assertEquals(auctionService.addAuction(null),Status.AUCTION_NOT_ADDED);
-    }
-
-
-    @Test
-    public void testGetAuctionSuccess()
-    {
-        auctionService.addAuction(auction);
-        Assert.assertEquals(auctionService.getAuction(auction.getAuctionId()),auction);
-    }
-
-
-    @Test
-    public void testGetAuctionFailure()
-    {
-        Assert.assertNull(auctionService.getAuction(UUID.randomUUID()));
-    }
-
-
-    @Test
-    public  void testPlaceBidShouldReturnSuccess()throws Exception
-    {
-        auctionService.addAuction(auction);
-        paymentGateWay.add(buyer.getUserId(),new BigDecimal(1000));
-
-        Assert.assertEquals(auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600))),
-                            Status.BID_ADDED);
-    }
-
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
+
     @Test
-    public  void testPlaceBidShouldReturnAuctionIsClosed()throws  Exception
-    {
+    public void testAddAuctionSuccess() {
+        Assert.assertEquals(auctionService.addAuction(auction), Status.AUCTION_ADDED);
+    }
+
+    @Test
+    public void testAddAuctionFailure() {
+        Assert.assertEquals(auctionService.addAuction(null), Status.AUCTION_NOT_ADDED);
+    }
+
+
+    @Test
+    public void testGetAuctionSuccess() throws Exception {
+        auctionService.addAuction(auction);
+        Assert.assertEquals(auctionService.getAuction(auction.getAuctionId()), auction);
+    }
+
+
+    @Test
+    public void testGetAuctionFailure() throws Exception {
+        expectedEx.expect(InvalidAuction.class);
+        expectedEx.expectMessage("Auction is not present");
+
+        UUID randomAuctionId = UUID.randomUUID();
+        Assert.assertNull(auctionService.getAuction(randomAuctionId));
+    }
+
+
+    @Test
+    public void testPlaceBidShouldReturnSuccess() throws Exception {
+        auctionService.addAuction(auction);
+        paymentGateWay.add(buyer.getUserId(), new BigDecimal(1000));
+
+        Assert.assertEquals(auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(600))),
+                            Status.BID_ADDED);
+    }
+
+
+    @Test
+    public void testPlaceBidShouldReturnAuctionIsClosed() throws Exception {
         expectedEx.expect(InvalidAuction.class);
         expectedEx.expectMessage("Auction is closed now ");
 
-        paymentGateWay.add(buyer.getUserId(),new BigDecimal(1000));
+        paymentGateWay.add(buyer.getUserId(), new BigDecimal(1000));
         auctionService.addAuction(auction);
 
-        long extraTime  = 1000;
-        sleep(auction.getEndTimeInSeconds()*1000 + extraTime);
+        long extraTime = 1000;
+        sleep(auction.getEndTimeInSeconds() * 1000 + extraTime);
 
         //place bid after auction get closed
-        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(800)));
+        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(800)));
     }
 
 
     @Test
-    public  void testPlaceBidShouldReturnAuctionNotPresent()throws Exception
-    {
+    public void testPlaceBidShouldReturnAuctionNotPresent() throws Exception {
         expectedEx.expect(InvalidAuction.class);
-        expectedEx.expectMessage("Trying to Bid on the Auction which is not present");
+        expectedEx.expectMessage("Auction is not present");
 
-        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        UUID randomAuctionId = UUID.randomUUID();
+        Bid bid = new Bid(buyer.getUserId(), new BigDecimal(600));
+
+        auctionService.placeBid(randomAuctionId, bid);
     }
 
     @Test
-    public  void testPlaceBidShouldReturnBidIsLower()throws Exception
-    {
+    public void testPlaceBidShouldReturnBidIsLower() throws Exception {
         expectedEx.expect(InvalidBid.class);
         expectedEx.expectMessage("Bid price is lower than the current bid");
 
 
-        paymentGateWay.add(buyer.getUserId(),new BigDecimal(1000));
+        paymentGateWay.add(buyer.getUserId(), new BigDecimal(1000));
         auctionService.addAuction(auction);
 
         //place 1st bid
-        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(600)));
         //place 2nd  bid lower
-        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(300)));
+        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(300)));
 
     }
 
     @Test
-    public  void testPlaceBidShouldReturnInSufficientBalance()throws Exception
-    {
+    public void testPlaceBidShouldReturnInSufficientBalance() throws Exception {
         expectedEx.expect(InSufficientBalance.class);
         expectedEx.expectMessage("Not SufficientBalance");
 
         auctionService.addAuction(auction);
 
-        auctionService.placeBid(auction.getAuctionId(),new Bid(buyer.getUserId(),new BigDecimal(600)));
+        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(600)));
 
     }
 }

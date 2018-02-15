@@ -27,11 +27,10 @@ public class AuctionSystemTest {
 
 
     @Before
-    public void beforeEachTestCase()
-    {
+    public void beforeEachTestCase() {
         seller = new User("abc", "abc@gmail.com");
-        buyerOne  = new User("xyz","xyz@gmail.com");
-        buyerTwo = new User("vik","vik@gmail.com");
+        buyerOne = new User("xyz", "xyz@gmail.com");
+        buyerTwo = new User("vik", "vik@gmail.com");
 
         userService = new UserService();
         paymentGateWay = new PaymentGateWayImpl();
@@ -75,30 +74,27 @@ public class AuctionSystemTest {
     */
 
     @Test
-    public void testPaymentAfterAuctionClosed()throws Exception
-    {
+    public void testPaymentAfterAuctionClosed() throws Exception {
         userService.createUser(seller);
         userService.createUser(buyerOne);
         userService.createUser(buyerTwo);
 
-        paymentGateWay.add(buyerOne.getUserId(),new BigDecimal(1000));
-        paymentGateWay.add(buyerTwo.getUserId(),new BigDecimal(800));
+        paymentGateWay.add(buyerOne.getUserId(), new BigDecimal(1000));
+        paymentGateWay.add(buyerTwo.getUserId(), new BigDecimal(800));
 
 
         auctionService.addAuction(auctionOne);
 
-        auctionService.placeBid(auctionOne.getAuctionId(),new Bid(buyerOne.getUserId(),new BigDecimal(200)));
-        auctionService.placeBid(auctionOne.getAuctionId(),new Bid(buyerTwo.getUserId(),new BigDecimal(300)));
-
-
+        auctionService.placeBid(auctionOne.getAuctionId(), new Bid(buyerOne.getUserId(), new BigDecimal(200)));
+        auctionService.placeBid(auctionOne.getAuctionId(), new Bid(buyerTwo.getUserId(), new BigDecimal(300)));
 
 
         sleep(6000);
 
 
-        Assert.assertEquals(seller.getWallet().getTotalBalanceInWallet(),new BigDecimal(300));
-        Assert.assertEquals(buyerOne.getWallet().getTotalBalanceInWallet(),new BigDecimal(1000));
-        Assert.assertEquals(buyerTwo.getWallet().getTotalBalanceInWallet(),new BigDecimal(500));
+        Assert.assertEquals(seller.getWallet().getTotalBalanceInWallet(), new BigDecimal(300));
+        Assert.assertEquals(buyerOne.getWallet().getTotalBalanceInWallet(), new BigDecimal(1000));
+        Assert.assertEquals(buyerTwo.getWallet().getTotalBalanceInWallet(), new BigDecimal(500));
 
     }
 }

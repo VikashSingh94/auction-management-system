@@ -15,38 +15,32 @@ public class UserServiceTest {
 
 
     @Before
-    public void beforeEachTestCase()
-    {
+    public void beforeEachTestCase() {
         user = new User("abc", "abc@gmail.com");
         userService = new UserService();
     }
 
 
     @Test
-    public void testCreateUserSuccess()
-    {
-        Assert.assertEquals(userService.createUser(user),Status.USER_ADDED);
+    public void testCreateUserSuccess() {
+        Assert.assertEquals(userService.createUser(user), Status.USER_ADDED);
     }
 
     @Test
-    public void testCreateUserFailure()
-    {
-        Assert.assertEquals(userService.createUser(null),Status.USER_NOT_ADDED);
+    public void testCreateUserFailure() {
+        Assert.assertEquals(userService.createUser(null), Status.USER_NOT_ADDED);
     }
 
     @Test
-    public void testGetUserSuccess()
-    {
+    public void testGetUserSuccess() {
         userService.createUser(user);
-        Assert.assertEquals(userService.getUser(user.getUserId()),user);
+        Assert.assertEquals(userService.getUser(user.getUserId()), user);
     }
 
     @Test
-    public  void testGetUserFailure()
-    {
+    public void testGetUserFailure() {
         Assert.assertNull(userService.getUser(UUID.randomUUID()));
     }
-
 
 
 }
