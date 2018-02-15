@@ -1,6 +1,7 @@
 package com.hashmap.dao;
 
 
+import com.hashmap.exception.InvalidAuction;
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
 import com.hashmap.models.user.User;
@@ -19,7 +20,7 @@ public interface InMemoryDoa
 
     boolean updateCurrentBid(UUID auctionId , Bid bid);
 
-    Auction getAuction(UUID auctionId);
+    Auction getAuction(UUID auctionId)throws InvalidAuction;
 
     boolean addUser(User user);
 
@@ -28,4 +29,5 @@ public interface InMemoryDoa
 
     boolean updateTotalBalanced(UUID userId, BigDecimal amount);
 
+    List<Auction> getRunningAuction();
 }

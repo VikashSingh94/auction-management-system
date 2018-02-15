@@ -11,7 +11,7 @@ public class PaymentGateWayImpl implements PaymentGateWay {
 
     InMemoryDoa dataAccessLayer;
 
-    public PaymentGateWayImpl(){
+    public PaymentGateWayImpl() {
         dataAccessLayer = new InMemoryDAOImpl();
     }
 
@@ -19,7 +19,7 @@ public class PaymentGateWayImpl implements PaymentGateWay {
     public Status add(UUID userId, BigDecimal amount) {
 
         User user = dataAccessLayer.getUser(userId);
-        if(user!=null) {
+        if (user != null) {
             amount = amount.add(dataAccessLayer.getUser(userId).getWallet().getTotalBalanceInWallet());
 
             if (dataAccessLayer.updateTotalBalanced(userId, amount))
@@ -33,14 +33,13 @@ public class PaymentGateWayImpl implements PaymentGateWay {
     }
 
     @Override
-    public Status pay( UUID payerId,UUID payeeId,BigDecimal amount) {
+    public Status pay(UUID payerId, UUID payeeId, BigDecimal amount) {
 
-        if(checkSufficientBalance(payerId,amount).equals(Status.SUFFICIENT_BALANCE))
-        {
+        if (checkSufficientBalance(payerId, amount).equals(Status.SUFFICIENT_BALANCE)) {
             BigDecimal totalBalance = dataAccessLayer.getUser(payerId).getWallet().getTotalBalanceInWallet();
 
-            if(dataAccessLayer.updateTotalBalanced(payerId,totalBalance.subtract(amount)))
-                if(add(payeeId,amount).equals(Status.AMOUNT_ADDED))
+            if (dataAccessLayer.updateTotalBalanced(payerId, totalBalance.subtract(amount)))
+                if (add(payeeId, amount).equals(Status.AMOUNT_ADDED))
                     return Status.PAYMENT_SUCCESSFUL;
         }
         return Status.PAYMENT_NOT_SUCCESSFUL;
@@ -48,11 +47,11 @@ public class PaymentGateWayImpl implements PaymentGateWay {
     }
 
     @Override
-    public Status checkSufficientBalance(UUID userId,BigDecimal amount) {
+    public Status checkSufficientBalance(UUID userId, BigDecimal amount) {
 
         BigDecimal totalBalance = dataAccessLayer.getUser(userId).getWallet().getTotalBalanceInWallet();
 
-        if(totalBalance.compareTo(amount) >=0)
+        if (totalBalance.compareTo(amount) >= 0)
             return Status.SUFFICIENT_BALANCE;
         else
             return Status.NOT_SUFFICIENTBALANCE;

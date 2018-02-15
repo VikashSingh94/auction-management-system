@@ -22,7 +22,7 @@ public class Auction {
         this.openingAuctionPrice = openingAuctionPrice;
         this.endTimeInSeconds = endTimeInSecond;
         isAuctionOpen = true;
-        currentBid = null;
+        currentBid = new Bid(sellerId,openingAuctionPrice);
       //  countDownTimer = new TimerService(endTimeInSeconds, this.auctionId);
     }
 
