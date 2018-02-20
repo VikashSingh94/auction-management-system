@@ -1,60 +1,56 @@
 package com.hashmap.service;
 
+import com.hashmap.core.Auction.AmountStatus;
+import com.hashmap.core.Payment.BalanceStatus;
+import com.hashmap.core.Payment.PaymentStatus;
 import com.hashmap.dao.InMemoryDAOImpl;
 import com.hashmap.dao.InMemoryDoa;
-import com.hashmap.models.user.User;
-
+import com.hashmap.exception.InvalidUser;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PaymentGateWayImpl implements PaymentGateWay {
 
-    InMemoryDoa dataAccessLayer;
+    private InMemoryDoa inMemoryDoa;
 
     public PaymentGateWayImpl() {
-        dataAccessLayer = new InMemoryDAOImpl();
+        inMemoryDoa = new InMemoryDAOImpl();
     }
 
     @Override
-    public Status add(UUID userId, BigDecimal amount) {
+    public AmountStatus add(UUID userId, BigDecimal amount)throws InvalidUser {
 
-        User user = dataAccessLayer.getUser(userId);
-        if (user != null) {
-            amount = amount.add(dataAccessLayer.getUser(userId).getWallet().getTotalBalanceInWallet());
+        amount = amount.add(inMemoryDoa.getTotalBalanceInWallet(userId));
 
-            if (dataAccessLayer.updateTotalBalanced(userId, amount))
-                return Status.AMOUNT_ADDED;
-            else
-                return Status.AMOUNT_NOT_ADDED;
-        }
-        //TODO: rename to user not present ,throw Exception
+        if (inMemoryDoa.updateTotalBalanced(userId, amount))
+            return AmountStatus.AMOUNT_ADDED;
         else
-            return Status.AMOUNT_NOT_ADDED;
+            return AmountStatus.AMOUNT_NOT_ADDED;
     }
 
     @Override
-    public Status pay(UUID payerId, UUID payeeId, BigDecimal amount) {
+    public PaymentStatus pay(UUID payerId, UUID payeeId, BigDecimal amount)throws InvalidUser {
 
-        if (checkSufficientBalance(payerId, amount).equals(Status.SUFFICIENT_BALANCE)) {
-            BigDecimal totalBalance = dataAccessLayer.getUser(payerId).getWallet().getTotalBalanceInWallet();
+        if (checkSufficientBalance(payerId, amount).equals(BalanceStatus.SUFFICIENT_BALANCE)) {
+            BigDecimal totalBalance = inMemoryDoa.getTotalBalanceInWallet(payerId);
 
-            if (dataAccessLayer.updateTotalBalanced(payerId, totalBalance.subtract(amount)))
-                if (add(payeeId, amount).equals(Status.AMOUNT_ADDED))
-                    return Status.PAYMENT_SUCCESSFUL;
+            if (inMemoryDoa.updateTotalBalanced(payerId, totalBalance.subtract(amount)))
+                if (add(payeeId, amount).equals(AmountStatus.AMOUNT_ADDED))
+                    return PaymentStatus.PAYMENT_SUCCESSFUL;
         }
-        return Status.PAYMENT_NOT_SUCCESSFUL;
+        return PaymentStatus.PAYMENT_NOT_SUCCESSFUL;
 
     }
 
     @Override
-    public Status checkSufficientBalance(UUID userId, BigDecimal amount) {
+    public BalanceStatus checkSufficientBalance(UUID userId, BigDecimal amount)throws InvalidUser {
 
-        BigDecimal totalBalance = dataAccessLayer.getUser(userId).getWallet().getTotalBalanceInWallet();
+        BigDecimal totalBalance = inMemoryDoa.getTotalBalanceInWallet(userId);
 
         if (totalBalance.compareTo(amount) >= 0)
-            return Status.SUFFICIENT_BALANCE;
+            return BalanceStatus.SUFFICIENT_BALANCE;
         else
-            return Status.NOT_SUFFICIENTBALANCE;
+            return BalanceStatus.NOT_SUFFICIENT_BALANCE;
 
     }
 

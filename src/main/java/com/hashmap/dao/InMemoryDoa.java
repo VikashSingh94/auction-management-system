@@ -20,14 +20,15 @@ public interface InMemoryDoa
 
     boolean updateCurrentBid(UUID auctionId , Bid bid);
 
-    Auction getAuction(UUID auctionId)throws InvalidAuction;
+    Auction getAuction(UUID auctionId);
 
     boolean addUser(User user);
 
     User getUser(UUID userId);
 
-
     boolean updateTotalBalanced(UUID userId, BigDecimal amount);
 
     List<Auction> getRunningAuction();
+
+    BigDecimal getTotalBalanceInWallet(UUID userId);
 }

@@ -1,5 +1,8 @@
 package com.hashmap.service;
 
+import com.hashmap.core.Auction.AuctionStatus;
+import com.hashmap.core.Auction.BidStatus;
+import com.hashmap.core.Payment.BalanceStatus;
 import com.hashmap.exception.InSufficientBalance;
 import com.hashmap.exception.InvalidAuction;
 import com.hashmap.exception.InvalidBid;
@@ -17,9 +20,9 @@ import java.util.UUID;
 
 public class AuctionService {
 
-    InMemoryDoa inMemoryDoa;
-    PaymentGateWay paymentGateWay;
-    Map<UUID, TimerService> timers = new TreeMap<>();
+    private InMemoryDoa inMemoryDoa;
+    private PaymentGateWay paymentGateWay;
+    private  Map<UUID, TimerService> timers = new TreeMap<>();
 
 
     //Reduce the dependency,Initialize in constructor,
@@ -32,28 +35,28 @@ public class AuctionService {
 
     //Function should be doing one thing
     //So,we created function StartTimeWithListenerCallBack
-    public Status addAuction(Auction auction) {
+    public AuctionStatus addAuction(Auction auction) {
 
         if (auction != null) {
             if (inMemoryDoa.addAuction(auction)) {
-                startAuctionTimerWithListenerCallBack(auction);
-                return Status.AUCTION_ADDED;
+                startAuctionTimer(auction);
+                return AuctionStatus.AUCTION_ADDED;
             }
         }
-        return Status.AUCTION_NOT_ADDED;
+        return AuctionStatus.AUCTION_NOT_ADDED;
     }
 
-    public void startAuctionTimerWithListenerCallBack(Auction auction) {
+    public void startAuctionTimer(Auction auction) {
         Listener listener = new AuctionListener(auction.getAuctionId());
         timers.put(auction.getAuctionId(), new TimerService(auction.getEndTimeInSeconds(), listener));
     }
 
 
-    public List<Auction> runningAuctions() {
+    public List<Auction> getOpenAuctions() {
         return inMemoryDoa.getRunningAuction();
     }
 
-    public Auction getAuction(UUID auctionId) throws InvalidAuction {
+    public Auction getAuction(UUID auctionId) {
         return inMemoryDoa.getAuction(auctionId);
     }
 
@@ -61,7 +64,7 @@ public class AuctionService {
     //function should have one level of abstraction
     //refactor the placeBid method and create the 4 method
 
-    public Status placeBid(UUID auctionId, Bid bid) throws Exception {
+    public BidStatus placeBid(UUID auctionId, Bid bid)  {
         Auction auction = inMemoryDoa.getAuction(auctionId);
 
         checkBalance(bid);
@@ -72,15 +75,15 @@ public class AuctionService {
             throw new InvalidAuction("Auction is closed now ");
     }
 
-    private void checkBalance(Bid bid) throws InSufficientBalance {
+    private void checkBalance(Bid bid) {
         UUID userId = bid.getUserId();
         BigDecimal bidPrice = bid.getBidPrice();
 
-        if (paymentGateWay.checkSufficientBalance(userId, bidPrice).equals(Status.NOT_SUFFICIENTBALANCE))
+        if (paymentGateWay.checkSufficientBalance(userId, bidPrice).equals(BalanceStatus.NOT_SUFFICIENT_BALANCE))
             throw new InSufficientBalance("Not SufficientBalance");
     }
 
-    private Status updateCurrentBid(Auction auction, Bid bid) throws InvalidBid {
+    private BidStatus updateCurrentBid(Auction auction, Bid bid) {
         BigDecimal currentBidPrice = auction.getCurrentBid().getBidPrice();
         BigDecimal presentBidPrice = bid.getBidPrice();
 
@@ -90,12 +93,12 @@ public class AuctionService {
             throw new InvalidBid("Bid price is lower than the current bid");
     }
 
-    private Status addBidToAuction(UUID auctionId, Bid bid) {
+    private BidStatus addBidToAuction(UUID auctionId, Bid bid) {
 
         if (inMemoryDoa.updateCurrentBid(auctionId, bid))
-            return Status.BID_ADDED;
+            return BidStatus.BID_ADDED;
         else
-            return Status.BID_NOT_ADDED;
+            return BidStatus.BID_NOT_ADDED;
     }
 
 }

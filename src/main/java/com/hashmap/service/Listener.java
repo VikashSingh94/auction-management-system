@@ -5,21 +5,21 @@ import com.hashmap.dao.InMemoryDAOImpl;
 import com.hashmap.dao.InMemoryDoa;
 import com.hashmap.exception.InvalidAuction;
 import com.hashmap.models.auction.Auction;
+import com.hashmap.models.auction.Bid;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 interface Listener {
     void onAuctionEnd();
-
     void paymentProcess();
 }
 
 class AuctionListener implements Listener {
 
-    UUID auctionId;
-    InMemoryDoa inMemoryDoa;
-    PaymentGateWay paymentGateWay;
+    private UUID auctionId;
+    private InMemoryDoa inMemoryDoa;
+    private PaymentGateWay paymentGateWay;
 
     public AuctionListener(UUID auctionId) {
         this.auctionId = auctionId;
@@ -39,10 +39,14 @@ class AuctionListener implements Listener {
 
             Auction auction = inMemoryDoa.getAuction(this.auctionId);
 
-            if (auction.getCurrentBid().getUserId() != auction.getSellerId()) {
+            Bid currentBid = auction.getCurrentBid();
+            UUID buyerId = currentBid.getUserId();
+
+            if (buyerId != auction.getSellerId()) {
 
                 UUID payerId = auction.getCurrentBid().getUserId();
                 UUID payeeId = auction.getSellerId();
+
                 BigDecimal paymentAmount = auction.getCurrentBid().getBidPrice();
 
                 paymentGateWay.pay(payerId, payeeId, paymentAmount);

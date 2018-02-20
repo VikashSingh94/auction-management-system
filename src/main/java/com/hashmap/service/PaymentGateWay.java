@@ -1,16 +1,19 @@
 package com.hashmap.service;
 
-import com.hashmap.models.auction.Bid;
+import com.hashmap.core.Auction.AmountStatus;
+import com.hashmap.core.Payment.BalanceStatus;
+import com.hashmap.core.Payment.PaymentStatus;
+
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface PaymentGateWay {
 
-    Status add(UUID userId, BigDecimal amount);
+    AmountStatus add(UUID userId, BigDecimal amount);
 
-    Status pay(UUID payerId,UUID payeeId,BigDecimal amount);
+    PaymentStatus pay(UUID payerId, UUID payeeId, BigDecimal amount);
 
-    Status checkSufficientBalance(UUID userId, BigDecimal amount);
+    BalanceStatus checkSufficientBalance(UUID userId, BigDecimal amount);
 
 }

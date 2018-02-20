@@ -1,37 +1,8 @@
 package com.hashmap.service;
 
-import com.hashmap.exception.InvalidAuction;
 
 import java.util.Timer;
 import java.util.TimerTask;
-//
-//public class TimerService {
-//
-//    final private Timer timer;
-//    private int secondsLeft;
-//    Listener listener;
-//
-//    public TimerService(int seconds, final UUID auctionID) {
-//        timer = new Timer();
-//
-//        secondsLeft =  seconds;
-//        // Decrease seconds left every 1 second.
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                secondsLeft--;
-//                if (secondsLeft == 0) {
-//                    timer.cancel();
-//
-//                }
-//            }
-//        }, 0, 1000);
-//    }
-//
-//    public int getSecondsLeft() {
-//        return secondsLeft;
-//    }
-//}
 
 
 public class TimerService {

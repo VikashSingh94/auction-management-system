@@ -1,6 +1,7 @@
 package com.hashmap.dao;
 
 import com.hashmap.exception.InvalidAuction;
+import com.hashmap.exception.InvalidUser;
 import com.hashmap.models.auction.Auction;
 import com.hashmap.dbms.*;
 import com.hashmap.models.auction.Bid;
@@ -68,5 +69,15 @@ public class InMemoryDAOImpl implements InMemoryDoa {
     public List<Auction> getRunningAuction() {
         List<Auction> auctions = inMemoryDataBase.getAuctions();
         return auctions.stream().filter(auction ->(auction.getIsAuctionOpen())).collect(toList());
+    }
+
+    @Override
+    public BigDecimal getTotalBalanceInWallet(UUID userId) throws InvalidUser{
+        User user = inMemoryDataBase.getUser(userId);
+
+        if( user != null)
+            return user.getWallet().getTotalBalanceInWallet();
+        else
+            throw new InvalidUser("User not present");
     }
 }
