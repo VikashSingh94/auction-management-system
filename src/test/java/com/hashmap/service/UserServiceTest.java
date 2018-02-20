@@ -1,5 +1,6 @@
 package com.hashmap.service;
 
+import com.hashmap.core.User.UserStatus;
 import com.hashmap.models.user.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,12 +24,12 @@ public class UserServiceTest {
 
     @Test
     public void testCreateUserSuccess() {
-        Assert.assertEquals(userService.createUser(user), Status.USER_ADDED);
+        Assert.assertEquals(userService.createUser(user), UserStatus.USER_ADDED);
     }
 
     @Test
     public void testCreateUserFailure() {
-        Assert.assertEquals(userService.createUser(null), Status.USER_NOT_ADDED);
+        Assert.assertEquals(userService.createUser(null), UserStatus.USER_NOT_ADDED);
     }
 
     @Test
@@ -41,6 +42,5 @@ public class UserServiceTest {
     public void testGetUserFailure() {
         Assert.assertNull(userService.getUser(UUID.randomUUID()));
     }
-
 
 }

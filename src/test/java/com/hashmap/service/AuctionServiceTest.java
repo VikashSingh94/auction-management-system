@@ -1,5 +1,7 @@
 package com.hashmap.service;
 
+import com.hashmap.core.Auction.AuctionStatus;
+import com.hashmap.core.Auction.BidStatus;
 import com.hashmap.exception.InSufficientBalance;
 import com.hashmap.exception.InvalidAuction;
 import com.hashmap.exception.InvalidBid;
@@ -14,11 +16,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 
-import static com.sun.applet2.preloader.event.ConfigEvent.STATUS;
 import static java.lang.Thread.sleep;
 
 public class AuctionServiceTest {
@@ -45,8 +45,9 @@ public class AuctionServiceTest {
         auctionService = new AuctionService();
         paymentGateWay = new PaymentGateWayImpl();
 
-        auction = new Auction(new Item("jet engines", "mach 3 "),
-                              seller.getUserId(), new BigDecimal(100), 5);
+        Item item = new Item("jet engines", "mach 3 ");
+
+        auction = new Auction(item, seller.getUserId(), new BigDecimal(100), 5);
     }
 
     @Rule
@@ -55,24 +56,24 @@ public class AuctionServiceTest {
 
     @Test
     public void testAddAuctionSuccess() {
-        Assert.assertEquals(auctionService.addAuction(auction), Status.AUCTION_ADDED);
+        Assert.assertEquals(auctionService.addAuction(auction), AuctionStatus.AUCTION_ADDED);
     }
 
     @Test
     public void testAddAuctionFailure() {
-        Assert.assertEquals(auctionService.addAuction(null), Status.AUCTION_NOT_ADDED);
+        Assert.assertEquals(auctionService.addAuction(null), AuctionStatus.AUCTION_NOT_ADDED);
     }
 
 
     @Test
-    public void testGetAuctionSuccess() throws Exception {
+    public void testGetAuctionSuccess()  {
         auctionService.addAuction(auction);
         Assert.assertEquals(auctionService.getAuction(auction.getAuctionId()), auction);
     }
 
 
     @Test
-    public void testGetAuctionFailure() throws Exception {
+    public void testGetAuctionFailure()  {
         expectedEx.expect(InvalidAuction.class);
         expectedEx.expectMessage("Auction is not present");
 
@@ -82,12 +83,14 @@ public class AuctionServiceTest {
 
 
     @Test
-    public void testPlaceBidShouldReturnSuccess() throws Exception {
+    public void testPlaceBidShouldReturnSuccess() {
         auctionService.addAuction(auction);
         paymentGateWay.add(buyer.getUserId(), new BigDecimal(1000));
 
-        Assert.assertEquals(auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(600))),
-                            Status.BID_ADDED);
+        Bid bid = new Bid(buyer.getUserId(), new BigDecimal(600));
+        UUID auctionId = auction.getAuctionId();
+
+        Assert.assertEquals(auctionService.placeBid(auctionId,bid), BidStatus.BID_ADDED);
     }
 
 
@@ -102,13 +105,15 @@ public class AuctionServiceTest {
         long extraTime = 1000;
         sleep(auction.getEndTimeInSeconds() * 1000 + extraTime);
 
+        Bid bid = new Bid(buyer.getUserId(), new BigDecimal(800));
+
         //place bid after auction get closed
-        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(800)));
+        auctionService.placeBid(auction.getAuctionId(),bid);
     }
 
 
     @Test
-    public void testPlaceBidShouldReturnAuctionNotPresent() throws Exception {
+    public void testPlaceBidShouldReturnAuctionNotPresent()  {
         expectedEx.expect(InvalidAuction.class);
         expectedEx.expectMessage("Auction is not present");
 
@@ -119,7 +124,7 @@ public class AuctionServiceTest {
     }
 
     @Test
-    public void testPlaceBidShouldReturnBidIsLower() throws Exception {
+    public void testPlaceBidShouldReturnBidIsLower()  {
         expectedEx.expect(InvalidBid.class);
         expectedEx.expectMessage("Bid price is lower than the current bid");
 
@@ -128,20 +133,26 @@ public class AuctionServiceTest {
         auctionService.addAuction(auction);
 
         //place 1st bid
-        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(600)));
+        Bid bid = new Bid(buyer.getUserId(), new BigDecimal(600));
+        auctionService.placeBid(auction.getAuctionId(), bid);
+
         //place 2nd  bid lower
-        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(300)));
+        bid = new Bid(buyer.getUserId(), new BigDecimal(300));
+        auctionService.placeBid(auction.getAuctionId(), bid);
 
     }
 
     @Test
-    public void testPlaceBidShouldReturnInSufficientBalance() throws Exception {
+    public void testPlaceBidShouldReturnInSufficientBalance() {
         expectedEx.expect(InSufficientBalance.class);
         expectedEx.expectMessage("Not SufficientBalance");
 
         auctionService.addAuction(auction);
 
-        auctionService.placeBid(auction.getAuctionId(), new Bid(buyer.getUserId(), new BigDecimal(600)));
+        Bid bid = new Bid(buyer.getUserId(), new BigDecimal(600));
+
+        auctionService.placeBid(auction.getAuctionId(),bid);
 
     }
+
 }

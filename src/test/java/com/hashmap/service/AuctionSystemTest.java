@@ -40,38 +40,7 @@ public class AuctionSystemTest {
         auctionTwo = new Auction(new Item("Plane engines", "mach 9 "), seller.getUserId(), new BigDecimal(100), 5);
 
     }
-/*
-    @Test
-    public void testPaymentAfterAuctionClosed()throws Exception
-    {
-        userService.createUser(seller);
-        userService.createUser(buyerOne);
-        userService.createUser(buyerTwo);
 
-        paymentGateWay.add(buyerOne.getUserId(),new BigDecimal(1000));
-        paymentGateWay.add(buyerTwo.getUserId(),new BigDecimal(800));
-
-
-        auctionService.addAuction(auctionOne);
-        auctionService.addAuction(auctionTwo);
-
-        auctionService.placeBid(auctionOne.getAuctionId(),new Bid(buyerOne.getUserId(),new BigDecimal(200)));
-        auctionService.placeBid(auctionOne.getAuctionId(),new Bid(buyerTwo.getUserId(),new BigDecimal(300)));
-
-
-        auctionService.placeBid(auctionTwo.getAuctionId(),new Bid(buyerTwo.getUserId(),new BigDecimal(200)));
-        auctionService.placeBid(auctionTwo.getAuctionId(),new Bid(buyerOne.getUserId(),new BigDecimal(300)));
-
-
-        sleep(6000);
-
-
-        Assert.assertEquals(seller.getWallet().getTotalBalanceInWallet(),new BigDecimal(600));
-        Assert.assertEquals(buyerOne.getWallet().getTotalBalanceInWallet(),new BigDecimal(700));
-        Assert.assertEquals(buyerTwo.getWallet().getTotalBalanceInWallet(),new BigDecimal(500));
-
-    }
-    */
 
     @Test
     public void testPaymentAfterAuctionClosed() throws Exception {
@@ -82,15 +51,12 @@ public class AuctionSystemTest {
         paymentGateWay.add(buyerOne.getUserId(), new BigDecimal(1000));
         paymentGateWay.add(buyerTwo.getUserId(), new BigDecimal(800));
 
-
         auctionService.addAuction(auctionOne);
 
         auctionService.placeBid(auctionOne.getAuctionId(), new Bid(buyerOne.getUserId(), new BigDecimal(200)));
         auctionService.placeBid(auctionOne.getAuctionId(), new Bid(buyerTwo.getUserId(), new BigDecimal(300)));
 
-
         sleep(6000);
-
 
         Assert.assertEquals(seller.getWallet().getTotalBalanceInWallet(), new BigDecimal(300));
         Assert.assertEquals(buyerOne.getWallet().getTotalBalanceInWallet(), new BigDecimal(1000));
