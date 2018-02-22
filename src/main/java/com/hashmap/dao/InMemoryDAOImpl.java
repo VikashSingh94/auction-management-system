@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
-public class InMemoryDAOImpl implements InMemoryDoa {
+public class InMemoryDAOImpl implements InMemoryDao {
 
 
     private InMemoryDataBase inMemoryDataBase = InMemoryDataBase.getInstance();
@@ -72,7 +72,7 @@ public class InMemoryDAOImpl implements InMemoryDoa {
     }
 
     @Override
-    public BigDecimal getTotalBalanceInWallet(UUID userId) throws InvalidUser{
+    public BigDecimal totalBalanceInWallet(UUID userId) throws InvalidUser{
         User user = inMemoryDataBase.getUser(userId);
 
         if( user != null)

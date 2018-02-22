@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public interface InMemoryDoa
+public interface InMemoryDao
 {
     List getAuctions();
 
@@ -30,5 +30,5 @@ public interface InMemoryDoa
 
     List<Auction> getRunningAuction();
 
-    BigDecimal getTotalBalanceInWallet(UUID userId);
+    BigDecimal totalBalanceInWallet(UUID userId);
 }

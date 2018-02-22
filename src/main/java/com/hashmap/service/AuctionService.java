@@ -8,7 +8,7 @@ import com.hashmap.exception.InvalidAuction;
 import com.hashmap.exception.InvalidBid;
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
-import com.hashmap.dao.InMemoryDoa;
+import com.hashmap.dao.InMemoryDao;
 import com.hashmap.dao.InMemoryDAOImpl;
 
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class AuctionService {
 
-    private InMemoryDoa inMemoryDoa;
+    private InMemoryDao inMemoryDao;
     private PaymentGateWay paymentGateWay;
     private  Map<UUID, TimerService> timers = new TreeMap<>();
 
@@ -28,7 +28,7 @@ public class AuctionService {
     //Reduce the dependency,Initialize in constructor,
     //such that all member function can access it.
     public AuctionService() {
-        inMemoryDoa = new InMemoryDAOImpl();
+        inMemoryDao = new InMemoryDAOImpl();
         paymentGateWay = new PaymentGateWayImpl();
     }
 
@@ -38,7 +38,7 @@ public class AuctionService {
     public AuctionStatus addAuction(Auction auction) {
 
         if (auction != null) {
-            if (inMemoryDoa.addAuction(auction)) {
+            if (inMemoryDao.addAuction(auction)) {
                 startAuctionTimer(auction);
                 return AuctionStatus.AUCTION_ADDED;
             }
@@ -53,11 +53,11 @@ public class AuctionService {
 
 
     public List<Auction> getOpenAuctions() {
-        return inMemoryDoa.getRunningAuction();
+        return inMemoryDao.getRunningAuction();
     }
 
     public Auction getAuction(UUID auctionId) {
-        return inMemoryDoa.getAuction(auctionId);
+        return inMemoryDao.getAuction(auctionId);
     }
 
 
@@ -65,7 +65,7 @@ public class AuctionService {
     //refactor the placeBid method and create the 4 method
 
     public BidStatus placeBid(UUID auctionId, Bid bid)  {
-        Auction auction = inMemoryDoa.getAuction(auctionId);
+        Auction auction = inMemoryDao.getAuction(auctionId);
 
         checkBalance(bid);
 
@@ -95,7 +95,7 @@ public class AuctionService {
 
     private BidStatus addBidToAuction(UUID auctionId, Bid bid) {
 
-        if (inMemoryDoa.updateCurrentBid(auctionId, bid))
+        if (inMemoryDao.updateCurrentBid(auctionId, bid))
             return BidStatus.BID_ADDED;
         else
             return BidStatus.BID_NOT_ADDED;
