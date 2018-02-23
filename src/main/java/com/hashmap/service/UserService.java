@@ -1,24 +1,24 @@
 package com.hashmap.service;
 
 import com.hashmap.core.User.UserStatus;
-import com.hashmap.dao.InMemoryDao;
-import com.hashmap.dao.InMemoryDAOImpl;
+import com.hashmap.dao.UserDao;
+import com.hashmap.dao.UserDaoImpl;
 import com.hashmap.models.user.User;
 
 import java.util.UUID;
 
 public class UserService {
-    private InMemoryDao inMemoryDao;
+    private UserDao userDao;
 
     public UserService() {
-        inMemoryDao = new InMemoryDAOImpl();
+        userDao = new UserDaoImpl();
     }
 
 
     public UserStatus createUser(User user) {
 
         if (user != null)
-            if (inMemoryDao.addUser(user))
+            if (userDao.addUser(user))
                 return UserStatus.USER_ADDED;
 
         return UserStatus.USER_NOT_ADDED;
@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public User getUser(UUID userId) {
-        return inMemoryDao.getUser(userId);
+        return userDao.getUser(userId);
     }
 
 }

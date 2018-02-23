@@ -1,8 +1,8 @@
 package com.hashmap.service;
 
 
-import com.hashmap.dao.InMemoryDAOImpl;
-import com.hashmap.dao.InMemoryDao;
+import com.hashmap.dao.AuctionDao;
+import com.hashmap.dao.AuctionDaoImpl;
 import com.hashmap.exception.InvalidAuction;
 import com.hashmap.models.auction.Auction;
 import com.hashmap.models.auction.Bid;
@@ -18,18 +18,18 @@ interface Listener {
 class AuctionListener implements Listener {
 
     private UUID auctionId;
-    private InMemoryDao inMemoryDao;
+    private AuctionDao auctionDao;
     private PaymentGateWay paymentGateWay;
 
     public AuctionListener(UUID auctionId) {
         this.auctionId = auctionId;
-        inMemoryDao = new InMemoryDAOImpl();
+        auctionDao = new AuctionDaoImpl();
         paymentGateWay = new PaymentGateWayImpl();
     }
 
     @Override
     public void onAuctionEnd() {
-        inMemoryDao.updateIsAuctionOpen(this.auctionId, false);
+        auctionDao.updateIsAuctionOpen(this.auctionId, false);
     }
 
     @Override
@@ -37,7 +37,7 @@ class AuctionListener implements Listener {
 
         try {
 
-            Auction auction = inMemoryDao.getAuction(this.auctionId);
+            Auction auction = auctionDao.getAuction(this.auctionId);
 
             Bid currentBid = auction.getCurrentBid();
             UUID buyerId = currentBid.getUserId();

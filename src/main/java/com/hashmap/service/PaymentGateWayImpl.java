@@ -3,26 +3,26 @@ package com.hashmap.service;
 import com.hashmap.core.Auction.AmountStatus;
 import com.hashmap.core.Payment.BalanceStatus;
 import com.hashmap.core.Payment.PaymentStatus;
-import com.hashmap.dao.InMemoryDAOImpl;
-import com.hashmap.dao.InMemoryDao;
+import com.hashmap.dao.UserDao;
+import com.hashmap.dao.UserDaoImpl;
 import com.hashmap.exception.InvalidUser;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PaymentGateWayImpl implements PaymentGateWay {
 
-    private InMemoryDao inMemoryDao;
+    private UserDao userDao;
 
     public PaymentGateWayImpl() {
-        inMemoryDao = new InMemoryDAOImpl();
+        userDao = new UserDaoImpl();
     }
 
     @Override
     public AmountStatus add(UUID userId, BigDecimal amount)throws InvalidUser {
 
-        amount = amount.add(inMemoryDao.totalBalanceInWallet(userId));
+        amount = amount.add(userDao.totalBalanceInWallet(userId));
 
-        if (inMemoryDao.updateTotalBalanced(userId, amount))
+        if (userDao.updateTotalBalanced(userId, amount))
             return AmountStatus.AMOUNT_ADDED;
         else
             return AmountStatus.AMOUNT_NOT_ADDED;
@@ -32,9 +32,9 @@ public class PaymentGateWayImpl implements PaymentGateWay {
     public PaymentStatus pay(UUID payerId, UUID payeeId, BigDecimal amount)throws InvalidUser {
 
         if (checkSufficientBalance(payerId, amount).equals(BalanceStatus.SUFFICIENT_BALANCE)) {
-            BigDecimal totalBalance = inMemoryDao.totalBalanceInWallet(payerId);
+            BigDecimal totalBalance = userDao.totalBalanceInWallet(payerId);
 
-            if (inMemoryDao.updateTotalBalanced(payerId, totalBalance.subtract(amount)))
+            if (userDao.updateTotalBalanced(payerId, totalBalance.subtract(amount)))
                 if (add(payeeId, amount).equals(AmountStatus.AMOUNT_ADDED))
                     return PaymentStatus.PAYMENT_SUCCESSFUL;
         }
@@ -45,7 +45,7 @@ public class PaymentGateWayImpl implements PaymentGateWay {
     @Override
     public BalanceStatus checkSufficientBalance(UUID userId, BigDecimal amount)throws InvalidUser {
 
-        BigDecimal totalBalance = inMemoryDao.totalBalanceInWallet(userId);
+        BigDecimal totalBalance = userDao.totalBalanceInWallet(userId);
 
         if (totalBalance.compareTo(amount) >= 0)
             return BalanceStatus.SUFFICIENT_BALANCE;

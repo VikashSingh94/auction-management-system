@@ -1,9 +1,7 @@
 package com.hashmap.service;
 
-
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 public class TimerService {
 
@@ -30,7 +28,6 @@ public class TimerService {
             }
         }, 0, 1000);
     }
-
 
     public int getSecondsLeft() {
         return secondsLeft;
