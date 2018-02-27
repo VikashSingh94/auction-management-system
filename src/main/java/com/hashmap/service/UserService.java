@@ -7,10 +7,10 @@ import com.hashmap.models.user.User;
 
 import java.util.UUID;
 
-public class UserService {
+class UserService {
     private UserDao userDao;
 
-    public UserService() {
+    UserService() {
         userDao = new UserDaoImpl();
     }
 
