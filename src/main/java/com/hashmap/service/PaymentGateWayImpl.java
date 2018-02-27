@@ -9,11 +9,11 @@ import com.hashmap.exception.InvalidUser;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class PaymentGateWayImpl implements PaymentGateWay {
+class PaymentGateWayImpl implements PaymentGateWay {
 
     private UserDao userDao;
 
-    public PaymentGateWayImpl() {
+    PaymentGateWayImpl() {
         userDao = new UserDaoImpl();
     }
 
