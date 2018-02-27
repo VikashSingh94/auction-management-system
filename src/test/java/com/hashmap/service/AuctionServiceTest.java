@@ -3,7 +3,6 @@ package com.hashmap.service;
 import com.hashmap.core.Auction.AuctionStatus;
 import com.hashmap.core.Auction.BidStatus;
 import com.hashmap.dao.BidDao;
-import com.hashmap.dao.BidDaoImpl;
 import com.hashmap.exception.InSufficientBalance;
 import com.hashmap.exception.InvalidAuction;
 import com.hashmap.exception.InvalidBid;
