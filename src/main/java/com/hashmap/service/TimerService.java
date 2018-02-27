@@ -10,7 +10,7 @@ class TimerService {
     private Listener listener; // listener field
 
 
-    private TimerService(int seconds, Listener listener) {
+     TimerService(int seconds, Listener listener) {
         this.timer = new Timer();
         this.secondsLeft = seconds;
         this.listener = listener;
