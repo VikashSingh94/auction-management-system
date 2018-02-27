@@ -7,7 +7,7 @@ import com.hashmap.models.user.User;
 
 import java.util.UUID;
 
-class UserService {
+ class UserService {
     private UserDao userDao;
 
     UserService() {
