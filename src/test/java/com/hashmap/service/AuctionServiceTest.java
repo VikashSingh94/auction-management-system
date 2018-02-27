@@ -2,6 +2,8 @@ package com.hashmap.service;
 
 import com.hashmap.core.Auction.AuctionStatus;
 import com.hashmap.core.Auction.BidStatus;
+import com.hashmap.dao.BidDao;
+import com.hashmap.dao.BidDaoImpl;
 import com.hashmap.exception.InSufficientBalance;
 import com.hashmap.exception.InvalidAuction;
 import com.hashmap.exception.InvalidBid;
@@ -14,23 +16,28 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 
 import static java.lang.Thread.sleep;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AuctionServiceTest {
 
 
-    User seller;
-    User buyer;
-    UserService userService;
+    private User seller;
+    private User buyer;
+    private UserService userService;
 
-    PaymentGateWay paymentGateWay;
-    AuctionService auctionService;
-    Auction auction;
+    private PaymentGateWay paymentGateWay;
+    private AuctionService auctionService;
+    private Auction auction;
 
     @Before
     public void beforeEachTestCase() {
@@ -94,6 +101,7 @@ public class AuctionServiceTest {
     }
 
 
+
     @Test
     public void testPlaceBidShouldReturnAuctionIsClosed() throws Exception {
         expectedEx.expect(InvalidAuction.class);
@@ -153,6 +161,31 @@ public class AuctionServiceTest {
 
         auctionService.placeBid(auction.getAuctionId(),bid);
 
+    }
+
+
+
+    @Mock
+    private BidDao bidDao = mock(BidDao.class);
+
+    @InjectMocks
+    private AuctionService auctionServiceMock;
+
+    @Test
+    public void placeBidShouldReturnFailure() {
+
+        MockitoAnnotations.initMocks(this);
+
+        auctionServiceMock.addAuction(auction);
+        paymentGateWay.add(buyer.getUserId(), new BigDecimal(1000));
+
+        Bid bid = new Bid(buyer.getUserId(), new BigDecimal(600));
+        UUID auctionId = auction.getAuctionId();
+
+
+        when(bidDao.updateCurrentBid(auctionId,bid)).thenReturn(false);
+
+        Assert.assertEquals(auctionServiceMock.placeBid(auctionId,bid), BidStatus.BID_NOT_ADDED);
     }
 
 }

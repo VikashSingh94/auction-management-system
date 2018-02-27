@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class UserServiceTest {
 
-    User user;
-    UserService userService;
+    private User user;
+    private UserService userService;
 
 
     @Before

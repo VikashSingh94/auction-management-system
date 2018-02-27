@@ -15,9 +15,9 @@ import java.util.UUID;
 
 public class PaymentGateWayTest {
 
-    PaymentGateWay paymentGateWay;
-    User seller;
-    User buyer;
+    private PaymentGateWay paymentGateWay;
+    private User seller;
+    private User buyer;
 
     @Before
     public void beforeEachTestCase() {
