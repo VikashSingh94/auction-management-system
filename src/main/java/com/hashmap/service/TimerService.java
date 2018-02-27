@@ -3,14 +3,14 @@ package com.hashmap.service;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TimerService {
+class TimerService {
 
     final private Timer timer;
     private int secondsLeft;
     private Listener listener; // listener field
 
 
-    public TimerService(int seconds, Listener listener) {
+    private TimerService(int seconds, Listener listener) {
         this.timer = new Timer();
         this.secondsLeft = seconds;
         this.listener = listener;
@@ -29,8 +29,5 @@ public class TimerService {
         }, 0, 1000);
     }
 
-    public int getSecondsLeft() {
-        return secondsLeft;
-    }
 
 }
