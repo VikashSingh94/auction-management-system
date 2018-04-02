@@ -1,9 +1,14 @@
-package com.hashmap.models.auction;
+package com.hashmap.models;
+
 
 public class Item {
 
     private String name;
     private String description;
+
+    public Item(){
+
+    }
 
     public Item(String name, String description) {
         this.name = name;
@@ -14,8 +19,15 @@ public class Item {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
