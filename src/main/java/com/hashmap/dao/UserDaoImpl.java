@@ -1,37 +1,34 @@
 package com.hashmap.dao;
 
-import com.hashmap.dbms.InMemoryDataBase;
-import com.hashmap.exception.InvalidUser;
-import com.hashmap.models.user.User;
-
-import java.math.BigDecimal;
+import com.hashmap.entity.user.UserEntity;
+import com.hashmap.models.User;
+import com.hashmap.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import java.util.Optional;
 import java.util.UUID;
 
+@Component
 public class UserDaoImpl implements UserDao {
-    private InMemoryDataBase inMemoryDataBase = InMemoryDataBase.getInstance();
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
-    public boolean addUser(User user) {
-        return inMemoryDataBase.addUser(user);
+    public User addUser(User user) {
+
+        UserEntity userEntity = userRepository.save(new UserEntity(user));
+        return userEntity.toData();
     }
 
     @Override
-    public User getUser(UUID userId) {
-        return inMemoryDataBase.getUser(userId);
+    public Optional<User> getUser(UUID userId) {
+        Optional<UserEntity> userEntity = userRepository.findById(userId);
+
+        if (userEntity.isPresent()) {
+            return Optional.of(userEntity.get().toData());
+        } else {
+            return Optional.empty();
+        }
     }
 
-    @Override
-    public boolean updateTotalBalanced(UUID userId, BigDecimal amount) {
-        return inMemoryDataBase.updateTotalBalanced(userId, amount);
-    }
-
-    @Override
-    public BigDecimal totalBalanceInWallet(UUID userId) throws InvalidUser {
-        User user = inMemoryDataBase.getUser(userId);
-
-        if (user != null)
-            return user.getWallet().getTotalBalanceInWallet();
-        else
-            throw new InvalidUser("User not present");
-    }
 }

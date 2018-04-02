@@ -1,7 +1,8 @@
 package com.hashmap.dao;
-import com.hashmap.models.auction.Bid;
-import java.util.UUID;
+
+
+import com.hashmap.models.Bid;
 
 public interface BidDao {
-    boolean updateCurrentBid(UUID auctionId , Bid bid);
+    Bid save(Bid bid);
 }

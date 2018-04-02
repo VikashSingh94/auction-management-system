@@ -1,16 +1,21 @@
 package com.hashmap.dao;
 
-import com.hashmap.dbms.InMemoryDataBase;
-import com.hashmap.models.auction.Bid;
+import com.hashmap.entity.auction.BidEntity;
+import com.hashmap.models.Bid;
+import com.hashmap.repository.BidRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
+@Component
 public class BidDaoImpl implements BidDao {
 
-    private InMemoryDataBase inMemoryDataBase = InMemoryDataBase.getInstance();
+    @Autowired
+    private BidRepository bidRepository;
 
     @Override
-    public boolean updateCurrentBid(UUID auctionId, Bid bid) {
-        return inMemoryDataBase.updateCurrentBid(auctionId, bid);
+    public Bid save(Bid bid) {
+
+        BidEntity bidEntity = bidRepository.save(new BidEntity(bid));
+        return bidEntity.toData();
     }
 }
